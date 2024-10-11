@@ -1,0 +1,21 @@
+/* .PlayerTableContainer{
+    display: flex;
+    flex-direction: column;
+
+    flex-grow: 1;
+
+    border: 2px solid white;
+
+    box-sizing: border-box;
+
+    max-width: 1140px;
+
+    margin: 10% 20%;
+
+    font-size: 12px;
+} */
+
+.playerCountry{
+    height: 10%;
+    width: 10%;
+}

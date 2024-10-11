@@ -1,0 +1,18 @@
+characterToPlayersByMR
+{
+    "zangief": [{cfn1, rank1, mr1, zangief}, {cfn2, rank2, mr2, zangief}],
+    "dhalsim": [{cfn3, rank3, mr4, dhalsim}],
+}
+
+
+characterPlayerCountPairs
+{
+    "zangief": 2,
+    "dhalsim": 1,
+}
+
+StringToNumbers (in the case of CharacterName to list of player counts divided by MR bracket)
+{
+    "zangief": [0, 6, 1],
+    "cammy": [1, 9, 1],
+}

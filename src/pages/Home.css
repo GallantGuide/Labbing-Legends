@@ -1,0 +1,22 @@
+.Chart {
+    display: flex;
+
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+
+}
+
+.SortButtons{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+.SortButtons > *{
+    width: fit-content;
+
+    margin-bottom: 20px;
+}
+

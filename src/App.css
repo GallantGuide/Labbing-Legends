@@ -1,0 +1,20 @@
+.App {
+  text-align: center;
+
+  height: max-content;
+  min-height: 100vh;
+
+  width: 100vw;
+
+  display: flex;
+  flex-direction: row;
+
+  justify-content: center;
+  align-items: center;
+
+  background-color: #181818;
+
+  flex-grow: 1;
+
+}
+
