@@ -1,3 +1,8 @@
+# Installation
+
+Navigate to the project root directory and run ```npm install```
+Run the project with ```npm run dev```
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
