@@ -1,10 +1,11 @@
+import React from 'react'
 import { useState } from 'react'
 import './App.css'
 import { useRoutes } from 'react-router-dom'
-import Header from './components/Header'
-import PlayersPage from './pages/PlayersPage'
+import Header from './components/Bars/Header'
+import PlayersListPage from './pages/PlayerList/PlayersListPage'
 // import Home_v2 from './pages/Home_v2'
-import Home_v3 from './pages/Home_v3'
+import Home from './pages/Home/Home'
 
 function App() {
   const [count, setCount] = useState<number>(0)
@@ -22,11 +23,11 @@ function App() {
     // },
     {
       path: "/Highcharts",
-      element: <Home_v3/>
+      element: <Home/>
     },
     {
       path: "/players/:character",
-      element: <PlayersPage/>
+      element: <PlayersListPage/>
     }
   ])
 

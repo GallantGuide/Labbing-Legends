@@ -3,6 +3,7 @@
 @tailwind utilities;
 *{
   margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
 }
 
 :root{

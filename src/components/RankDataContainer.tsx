@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { CharacterToPlayers, StringToNumber, Player, PlayerDataList, CharacterPlayerCountPairs } from "./Types";
+import { useState, useEffect, useMemo } from "react";
+import { CharacterToPlayers, StringToNumber, Player, PlayerDataList, CharacterPlayerCountPairs } from "../Data/Types";
 
-import ranks from "./Ranksv5.json"
+import ranks from "../Data/Ranksv5.json"
 
 type RankDataProps = {
     playerLimit?: number
@@ -10,27 +10,20 @@ type RankDataProps = {
 export function useRankData({ playerLimit }: RankDataProps){
     const [rankData, setRankData] = useState<PlayerDataList>([])
     const [rankMetadata, setRankMetadata] = useState<string[]>([])
-    const [characterPlayerCountPairs, setCharacterPlayerCountPairs] = useState<CharacterPlayerCountPairs>([])
-    const [characterToPlayersByMR, setCharacterToPlayersByMR] = useState<CharacterToPlayers>({})
     
+    // memoize?
     useEffect(() => {
         // fetch data from json file (API call in future)
         setRankData(ranks["data"])
         setRankMetadata(ranks["columns"])
-    },[])
+    },[ranks["data"]])
 
+    // function getRankData(): PlayerDataList{
+    //     return ranks["data"]
+    // }
 
-
-    useEffect(() => {
-        // get transformed data, limited by playerLimit
-        if(rankData){
-            setCharacterPlayerCountPairs(getCharacterPlayerCountPairs(rankData.slice(0, playerLimit? playerLimit : 500)))
-            setCharacterToPlayersByMR(getCharacterToPlayersByMR(rankData.slice(0, playerLimit? playerLimit : 500)))
-            // console.log(getCharacterToPlayersByMR(rankData))
-        }
-    },[rankData, playerLimit])
-
-    function getCharacterPlayerCountPairs(data: PlayerDataList) : CharacterPlayerCountPairs {
+    function getCharacterPlayerCountPairs() : CharacterPlayerCountPairs {
+        const data: PlayerDataList = rankData.slice(0, playerLimit? playerLimit : 500)
         const tmp: StringToNumber = {}
 
         data.forEach((player) => {
@@ -44,7 +37,8 @@ export function useRankData({ playerLimit }: RankDataProps){
         return Object.entries(tmp).sort(([, freqA],[,freqB]) => freqA-freqB)
     }
 
-    function getCharacterToPlayersByMR(data: PlayerDataList) : CharacterToPlayers{
+    function getCharacterToPlayersByMR() : CharacterToPlayers{
+        const data: PlayerDataList = rankData.slice(0, playerLimit? playerLimit : 500)
         const tmp: CharacterToPlayers = {}
 
         for(const player of data){
@@ -72,6 +66,9 @@ export function useRankData({ playerLimit }: RankDataProps){
 
         return tmp
     }
+
+    const characterPlayerCountPairs: CharacterPlayerCountPairs = useMemo(() => getCharacterPlayerCountPairs(), [rankData, playerLimit])
+    const characterToPlayersByMR: CharacterToPlayers = useMemo(() => getCharacterToPlayersByMR(), [rankData, playerLimit])
 
     return {rankData, rankMetadata, characterPlayerCountPairs, characterToPlayersByMR}
 }

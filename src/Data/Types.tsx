@@ -34,6 +34,14 @@ export type CharacterToPlayers = {
 
 export type CharacterPlayerCountPairs = [string, number][]
 
+export type CountryPlayerCountPairs = [string, number][]
+
+export type PlayerDataList = (number|string)[][]
+
+export type CountryPlayerCountDataProps = {
+    playerLimit: number
+}
+
 export type RichStyle = {
     [key: string]: {
       height: number;
@@ -43,4 +51,3 @@ export type RichStyle = {
     };
 };
 
-export type PlayerDataList = (number|string)[][]
