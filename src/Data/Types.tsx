@@ -38,16 +38,16 @@ export type CountryPlayerCountPairs = [string, number][]
 
 export type PlayerDataList = (number|string)[][]
 
+/* Prop Data Types */
 export type CountryPlayerCountDataProps = {
     playerLimit: number
 }
 
-export type RichStyle = {
-    [key: string]: {
-      height: number;
-      backgroundColor: {
-        image: string;
-      };
-    };
-};
+export type ChartsDataProps = {
+    sortCriteria: string,
+    showMR: boolean,
+    playerLimit: number
+}
+
+
 

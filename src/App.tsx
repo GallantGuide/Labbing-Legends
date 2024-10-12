@@ -8,8 +8,6 @@ import PlayersListPage from './pages/PlayerList/PlayersListPage'
 import Home from './pages/Home/Home'
 
 function App() {
-  const [count, setCount] = useState<number>(0)
-
   let element = useRoutes([
     // {
     //   // path: "/",

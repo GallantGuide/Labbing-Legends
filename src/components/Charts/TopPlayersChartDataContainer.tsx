@@ -1,38 +1,8 @@
 import { useState, useEffect, useMemo, useRef } from "react"
 import { useRankData } from "../RankDataContainer"
-import Highcharts from "highcharts";
-import { CharacterToPlayerCountByMRintervals } from "../../Data/Types"
+import { CharacterToPlayerCountByMRintervals, ChartsDataProps } from "../../Data/Types"
 
-type ChartsDataProps = {
-    sortCriteria: string,
-    showMR: boolean,
-    playerLimit: number
-}
-const allCharacters: string[] = [
-    "Ryu",
-    "Ken",
-    "Chun-Li",
-    "Guile",
-    "Juri",
-    "Luke",
-    "Jamie",
-    "Kimberly",
-    "E. Honda",
-    "Blanka",
-    "Dhalsim",
-    "Cammy",
-    "Dee Jay",
-    "Manon",
-    "Marisa",
-    "JP",
-    "Zangief",
-    "Lily",
-    "Akuma",
-    "M. Bison",
-    "Terry",
-    "Rashid",
-    "Ed"
-]
+import { allCharacters } from "../../Data/StaticData";
 
 export function useTopPlayersChartData({ sortCriteria, showMR, playerLimit } :ChartsDataProps){
 
@@ -61,7 +31,7 @@ export function useTopPlayersChartData({ sortCriteria, showMR, playerLimit } :Ch
     }
     
     // list of frequencies per character ordered by MR or frequencies themselves (descending)
-    function getBarSeriesDataByPlayerCount() {
+    function getBarSeriesDataByPlayerCount(): number[]{
         if(sortCriteria == "MR"){
             return characterToPlayersByMR? (Object.entries(characterToPlayersByMR)).map((o) => o[1].length) : []
         }
@@ -110,8 +80,6 @@ export function useTopPlayersChartData({ sortCriteria, showMR, playerLimit } :Ch
         [showMR, sortCriteria, characterPlayerCountPairs, characterToPlayersByMR])
     const barDataByMRintervals = useMemo(() => getBarSeriesDataByMRIntervals(), 
         [showMR, sortCriteria, characterPlayerCountPairs, characterToPlayersByMR])
-
-
     
     const totalPlayers = useMemo(() => getTotalPlayers(), [characterPlayerCountPairs])
 

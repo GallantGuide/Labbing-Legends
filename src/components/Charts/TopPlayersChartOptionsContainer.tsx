@@ -2,12 +2,7 @@ import { charnameToIcon } from "../../Data/Icons";
 
 import { useState, useEffect, useMemo, useRef } from "react"
 import { useTopPlayersChartData } from "./TopPlayersChartDataContainer";
-
-type ChartsDataProps = {
-    sortCriteria: string,
-    showMR: boolean,
-    playerLimit: number
-}
+import { ChartsDataProps } from "../../Data/Types";
 
 export function useTopPlayersChartOptions({ sortCriteria, showMR, playerLimit }: ChartsDataProps){
     const { xAxisCategories, barDataByPlayerCount, barDataByMRintervals, totalPlayers } = useTopPlayersChartData({ sortCriteria, showMR, playerLimit })
