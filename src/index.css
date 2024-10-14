@@ -1,15 +1,55 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face{
+  font-family: 'Komika';
+  src: url('./assets/Fonts/KOMIKAX_.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face{
+  font-family: 'Blowbrush';
+  src: url('./assets/Fonts/blowbrush.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face{
+  font-family: 'Permanentmarker';
+  src: url('./assets/Fonts/PermanentMarker-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face{
+  font-family: 'Tagtype';
+  src: url('./assets/Fonts/tagtype-freefont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face{
+  font-family: 'Blankriver';
+  src: url('./assets/Fonts/Blank River.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 *{
   margin: 0;
   font-family: "Roboto","Helvetica","Arial",sans-serif;
+  /* font-family: 'Komika', sans-serif; */
 }
 
 :root{
   overflow-x: hidden;
   scrollbar-width: thin;
+
 }
+
+
 
 
 /* a {

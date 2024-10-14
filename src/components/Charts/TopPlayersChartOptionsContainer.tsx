@@ -3,6 +3,7 @@ import { charnameToIcon } from "../../Data/Icons";
 import { useState, useEffect, useMemo, useRef } from "react"
 import { useTopPlayersChartData } from "./TopPlayersChartDataContainer";
 import { ChartsDataProps } from "../../Data/Types";
+import { color } from "highcharts";
 
 export function useTopPlayersChartOptions({ sortCriteria, showMR, playerLimit }: ChartsDataProps){
     const { xAxisCategories, barDataByPlayerCount, barDataByMRintervals, totalPlayers } = useTopPlayersChartData({ sortCriteria, showMR, playerLimit })
@@ -11,33 +12,26 @@ export function useTopPlayersChartOptions({ sortCriteria, showMR, playerLimit }:
     const getSeriesList = (): Highcharts.Options["series"] => {
         if(showMR){
             const charNames = xAxisCategories
-            return [
-                {
-                    name: '2300+ MR', //top
-                    type: 'column',
-                    stack: 'MR',
-                    // color: '#fe218b',
-                    color: '#C93127',
-                    data: charNames.map(charName => barDataByMRintervals[charName][2]),
-                },
-                {
-                    name: '2200-2300 MR', //middle
-                    type: 'column',
-                    stack: 'MR',
-                    // color: '#21b0fe',
-                    color: '#F1D04A',
-                    data: charNames.map(charName => barDataByMRintervals[charName][1]),
-                },
-                {
-                    name: '2100-2200 MR', //bottom
-                    type: 'column',
-                    stack: 'MR',  // Stacking all series into one bar
-                    // color: '#fed700',
-                    color: '#20ACC9',
-                    data: charNames.map(charName => barDataByMRintervals[charName][0]),
-                },
+            const barColorsV1 = ["#C93127","#F1D04A","#20ACC9",] //top mid bot
+            const barColorsV2 = ["#edae49","#d1495b","#00798c",] //top mid bot
+            const barColorsV3 = ["#f3a712","#29335c","#db2b39",] //top mid bot
+            const intervalTitles = ['2100-2200 MR', '2200-2300 MR', '2300+ MR',]
 
-            ]
+            // Dynamically create each data array in series
+            const res: any[] = []
+            for(let i = 2; i >= 0; i--){
+                const tmp ={
+                    name: intervalTitles[i],
+                    type: 'column',
+                    stack: 'MR',
+                    color: barColorsV3[i],
+                    data: charNames.map(charName => barDataByMRintervals[charName][i])
+                }
+                res.push(tmp)
+            }
+            // console.log(res)
+
+            return res
         }
         else if(!showMR){
             return [
@@ -55,7 +49,7 @@ export function useTopPlayersChartOptions({ sortCriteria, showMR, playerLimit }:
     const iconWidth = 60  // TODO: change icon size
     const iconPadding = 1 
     const chartWidth = (iconWidth + iconPadding) * xAxisCategories.length  
-
+    
     const options: Highcharts.Options = {
         credits: {
             enabled: false,
@@ -90,14 +84,15 @@ export function useTopPlayersChartOptions({ sortCriteria, showMR, playerLimit }:
                 // }
             },
             series: {
-                opacity: 0.9,
+                opacity: 0.97,
                 states:{
                     hover: {
                         enabled: true,
                         opacity: 1,
                     },
                     inactive: {
-                        enabled: false,
+                        enabled: true,
+                        opacity: 0.6
                     }
                 }
             }

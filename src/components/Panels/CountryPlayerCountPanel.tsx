@@ -11,28 +11,38 @@ function CountryPlayerCountPanel({ playerLimit }: CountryPlayerCountDataProps) {
     const { countryToPlayerCount } = useCountryPlayerCountData({ playerLimit })
 
     return(
-        <div className="CountryPlayerCountBox">
-            {countryToPlayerCount &&
-                countryToPlayerCount.map(([country, playerCount], idx) => {
-                    let tmp = country
-                    switch(tmp){
-                        case "Other":
-                            tmp = "No Country"
-                            break
-                        case "No Country":
-                            tmp = "Other"
-                            break
-                    }
-                    return(
-                        <div key={idx} style={{display: 'flex', marginTop: '5px', marginBottom: '5px'}}>
-                            <img className="country-flag" style={{height: '20px', width: '30px'}} loading="lazy" alt={country} src={countryToIcon[tmp]}/>
-                            <span style={{marginLeft: '30px'}}>{playerCount}</span>
-                            <span style={{marginLeft: 'auto'}}>Players</span>
-                        </div>
-                    )
-                })
-            }
-        </div>
+        <table className="CountryPlayerCountBox">
+            <thead>
+                <tr>
+                    <th>Country</th>
+                    <th>Players</th>
+                </tr>
+            </thead>
+            <tbody>
+                {countryToPlayerCount &&
+                    countryToPlayerCount.map(([country, playerCount], idx) => {
+                        let tmp = country
+                        switch(tmp){
+                            case "Other":
+                                tmp = "Earth"
+                                break
+                            case "No Country":
+                                tmp = "Other"
+                                break
+                        }
+                        const size = (tmp == "Earth")? '25px' : null
+                        const imgStyle = {height: size || '20px', width: size || '30px'}
+                        const rowStyle = {}
+                        return(
+                            <tr key={idx} style={rowStyle}>
+                                <td style={{textAlign: 'start'}}><img className="country-flag" style={imgStyle} loading="lazy" alt={country} src={countryToIcon[tmp]}/></td>
+                                <td style={{textAlign: 'start'}}><span style={{}}>{playerCount}</span></td>
+                            </tr>
+                        )
+                    })
+                }
+            </tbody>
+        </table>
     )
 }
 

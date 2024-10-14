@@ -39,16 +39,20 @@ function useCountryPlayerCountData({ playerLimit }: CountryPlayerCountDataProps)
          * "No Country" represents player count without a country flag 
          */
         countryToPlayerCount["No Country"] = countryToPlayerCount["Other"]
-        countryToPlayerCount["Other"] = 0
+        delete countryToPlayerCount["Other"]
+        let otherPlayerCount = 0
         for(const [country, playerCount] of Object.entries(countryToPlayerCount)){
             if(country != "Other" && playerCount <= 5){
-                countryToPlayerCount["Other"] += playerCount
+                otherPlayerCount += playerCount
                 delete countryToPlayerCount[country]
             }
         }
 
         // sort countries by player count (descending)
-        return Object.entries(countryToPlayerCount).sort(([, countA], [, countB]) => countB-countA)
+        const sortedCountries =  Object.entries(countryToPlayerCount).sort(([, countA], [, countB]) => countB-countA)
+        sortedCountries.push(["Other", otherPlayerCount])
+
+        return sortedCountries
     }
 
     const countryToPlayerCount: CountryPlayerCountPairs = useMemo(() => getCountryToPlayerCount(), [characterToPlayersByMR])

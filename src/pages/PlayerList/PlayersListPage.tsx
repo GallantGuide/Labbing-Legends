@@ -6,21 +6,17 @@ import { useRankData } from "../../components/RankDataContainer"
 import { useParams, useLocation } from "react-router-dom";
 import { Player } from "../../Data/Types";
 
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material"
 
 import "./PlayersListPage.css"
+import { color } from "highcharts";
 
 function PlayersListPage() {
     const location = useLocation()
-
-    const [playerLimit, setPlayerLimit] = useState(location? location.state["playerLimit"] : 500)
+    const [playerLimit, setPlayerLimit] = useState(location.state?.playerLimit || 100)
     const [players, setPlayers] = useState<Player[]>()
+    const [country, setCountry] = useState<string>()
+    
     const { characterToPlayersByMR } = useRankData({playerLimit})
 
     const characterName = decodeURIComponent(location.pathname.split("/players/")[1])
@@ -31,35 +27,45 @@ function PlayersListPage() {
         }
     }, [characterToPlayersByMR])
 
-    useEffect(() => {
-        // console.log(characterName)
-        // console.log(location.state)
-    },[])
+    const tableContainerStyle = {
+        border: '1px solid rgb(65, 63, 63);',
+        borderRadius: 3, 
+        maxWidth: 1000, 
+        fontSize: 12, 
+        backgroundColor: '#252527', 
+        opacity: 0.95, 
+        marginTop: 5, 
+        marginBottom: 5,
+    }
+
+    const tableHeadCategories = ["Rank", "Name", "Country", "League", "MR"]
+    const tableHeadStyle = {
+        color: 'white',
+        padding: 2,
+    }
 
     return(
-        <TableContainer sx={{maxWidth: 1000, fontSize: 12, backgroundColor: 'white', opacity: 0.85}} component={Paper}>
+        <TableContainer sx={tableContainerStyle} component={Paper}>
             <Table>
                 <TableHead>
-                    <TableRow>
-                        <TableCell align="center">Rank</TableCell>
-                        <TableCell align="center">Name</TableCell>
-                        <TableCell align="center">Country</TableCell>
-                        <TableCell align="center">League</TableCell>
-                        <TableCell align="center">MR</TableCell>
+                    <TableRow sx={{backgroundColor: '#1c1e22', }}>
+                        {tableHeadCategories.map((category, idx) => {
+                            return(<TableCell key={idx} sx={tableHeadStyle} align="center">{category}</TableCell>)
+                        })}
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {players? players.map((player) => (
+                    {players? players.map((player, idx) => (
                         <TableRow
                             key={player.CFN}
                         >
-                            <TableCell component="th" scope="row" align="center">
+                            <TableCell sx={{color: 'white',}} component="th" scope="row" align="center">
                                 {player.Rank}
                             </TableCell>
-                            <TableCell align="left">{player.CFN}</TableCell>
-                            <TableCell align="center"><img className="playerCountry" loading="lazy" alt={player.Country} src={countryToIcon[player.Country]} /></TableCell>
-                            <TableCell align="center">Legend</TableCell>
-                            <TableCell align="center">{player.MR}</TableCell>
+                            <TableCell sx={{color: 'white',}} align="left">{player.CFN}</TableCell>
+                            <TableCell sx={{color: 'white',}} align="center"><img className="playerCountry" loading="lazy" alt={player.Country} src={countryToIcon[player.Country]} /></TableCell>
+                            <TableCell sx={{color: 'white',}} align="center">Legend</TableCell>
+                            <TableCell sx={{color: 'white',}} align="center">{player.MR}</TableCell>
                             {/* {<img style={{height: 100, width: 100}} src={LEGEND_ICON}/>} */}
                         </TableRow>
                     )):[]}

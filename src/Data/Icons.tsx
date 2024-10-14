@@ -24,6 +24,7 @@ import DR_ICON from "../assets/countryFlagIcons/dominicanrepublic-icon.png"
 import BARBADOS_ICON from "../assets/countryFlagIcons/barbados-icon.png"
 import JAMAICA_ICON from "../assets/countryFlagIcons/jamaica-icon.png"
 import CANADA_ICON from "../assets/countryFlagIcons/canada-icon.png"
+import EARTH_ICON from "../assets/countryFlagIcons/earth-icon.png"
 
 import RYU_ICON from "../assets/characterIcons/Named/ryu-icon.png"
 import KEN_ICON from "../assets/characterIcons/Named/ken-icon.png"
@@ -54,7 +55,6 @@ export const countryToIcon: Record<string, string> = {
     "South Korea": SOUTHKOREA_ICON,
     "China": CHINA_ICON,
     "Japan": JAPAN_ICON,
-    "Other": NOCOUNTRY_ICON,
     "Norway": NORWAY_ICON,
     "United Kingdom": UK_ICON,
     "Honduras": HONDURAS_ICON,
@@ -76,7 +76,10 @@ export const countryToIcon: Record<string, string> = {
     "Dominican Republic": DR_ICON,
     "Barbados": BARBADOS_ICON,
     "Jamaica": JAMAICA_ICON,
-    "Canada": CANADA_ICON
+    "Canada": CANADA_ICON,
+    
+    "Other": NOCOUNTRY_ICON,
+    "Earth": EARTH_ICON
 }
 
 export const charnameToIcon: Record<string, string> = {
