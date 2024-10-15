@@ -104,6 +104,8 @@ function Home(){
                             value={playerLimit}
                             onChange={handlePlayerLimitRadio}
                         >
+                            <FormControlLabel sx={radioLabelStyle} value={2000} control={<Radio />} label={<Typography sx={radioLabelStyle}>2000</Typography>} />
+                            <FormControlLabel sx={radioLabelStyle} value={1000} control={<Radio />} label={<Typography sx={radioLabelStyle}>1000</Typography>} />
                             <FormControlLabel sx={radioLabelStyle} value={500} control={<Radio />} label={<Typography sx={radioLabelStyle}>500</Typography>} />
                             <FormControlLabel sx={radioLabelStyle} value={100} control={<Radio />} label={<Typography sx={radioLabelStyle}>100</Typography>} />
                         </RadioGroup>

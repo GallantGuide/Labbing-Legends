@@ -6,9 +6,9 @@
   width: 100vw;
 
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 
   /* background-color: #181818; */

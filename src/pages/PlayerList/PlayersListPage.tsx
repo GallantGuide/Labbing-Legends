@@ -17,24 +17,30 @@ function PlayersListPage() {
     const [players, setPlayers] = useState<Player[]>()
     const [country, setCountry] = useState<string>()
     
-    const { characterToPlayersByMR } = useRankData({playerLimit})
+    const { characterToPlayersByMR, playersListByMR } = useRankData({playerLimit})
 
     const characterName = decodeURIComponent(location.pathname.split("/players/")[1])
 
     useEffect(() => {
-        if(characterToPlayersByMR){
+        // console.log(playerLimit)
+        if(characterToPlayersByMR && characterName){
             setPlayers(characterToPlayersByMR[characterName])
+            // console.log(characterName)
+            // console.log(characterToPlayersByMR[characterName])
         }
-    }, [characterToPlayersByMR])
+        else
+        {
+            setPlayers(playersListByMR)
+        }
+    }, [characterToPlayersByMR, playersListByMR,])
 
     const tableContainerStyle = {
         border: '1px solid rgb(65, 63, 63);',
-        borderRadius: 3, 
-        maxWidth: 1000, 
-        fontSize: 12, 
-        backgroundColor: '#252527', 
-        opacity: 0.95, 
-        marginTop: 5, 
+        borderRadius: 3,
+        maxWidth: 1000,
+        fontSize: 12,
+        backgroundColor: '#252527',
+        opacity: 0.95,
         marginBottom: 5,
     }
 
@@ -57,7 +63,7 @@ function PlayersListPage() {
                 <TableBody>
                     {players? players.map((player, idx) => (
                         <TableRow
-                            key={player.CFN}
+                            key={player.Usercode + player.Character}
                         >
                             <TableCell sx={{color: 'white',}} component="th" scope="row" align="center">
                                 {player.Rank}

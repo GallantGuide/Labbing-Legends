@@ -13,9 +13,9 @@ export function useTopPlayersChartOptions({ sortCriteria, showMR, playerLimit }:
         if(showMR){
             const charNames = xAxisCategories
             const barColorsV1 = ["#C93127","#F1D04A","#20ACC9",] //top mid bot
-            const barColorsV2 = ["#edae49","#d1495b","#00798c",] //top mid bot
+            const barColorsV2 = ["#00798c","#edae49","#d1495b",] //top mid bot
             const barColorsV3 = ["#f3a712","#29335c","#db2b39",] //top mid bot
-            const intervalTitles = ['2100-2200 MR', '2200-2300 MR', '2300+ MR',]
+            const intervalTitles = ['< 2200 MR', '2200-2300 MR', '2300+ MR',]
 
             // Dynamically create each data array in series
             const res: any[] = []
@@ -24,7 +24,7 @@ export function useTopPlayersChartOptions({ sortCriteria, showMR, playerLimit }:
                     name: intervalTitles[i],
                     type: 'column',
                     stack: 'MR',
-                    color: barColorsV3[i],
+                    color: barColorsV2[i],
                     data: charNames.map(charName => barDataByMRintervals[charName][i])
                 }
                 res.push(tmp)

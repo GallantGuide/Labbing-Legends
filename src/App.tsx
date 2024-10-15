@@ -2,27 +2,23 @@ import React, { useEffect } from 'react'
 import { useState } from 'react'
 import './App.css'
 import { useRoutes } from 'react-router-dom'
-import Header from './components/Bars/Header'
+import Header from './components/Bars/Navbar'
 import PlayersListPage from './pages/PlayerList/PlayersListPage'
 import Home from './pages/Home/Home'
 import { createTheme, ThemeProvider } from '@mui/material'
 
 import { GlobalProvider } from './pages/GlobalProvider'
+import Navbar from './components/Bars/Navbar'
 
 // Global themes for MUI components
 const customTheme = createTheme({
   typography:{
     // fontFamily: 'Komika',
+    // fontFamily: 'Roboto, Helvetica, Arial, sans-serif'
   },
 })
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    setIsLoading(false)
-  },[])
-
   let element = useRoutes([
     // {
     //   // path: "/",
@@ -39,26 +35,15 @@ function App() {
       element: <Home/>
     },
     {
-      path: "/players/:character",
+      path: "/players/:character?",
       element: <PlayersListPage/>
     }
   ])
 
   return (
       <ThemeProvider theme={customTheme}>
-          {isLoading &&
-            <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100vh',
-              width: '100vw',
-              backgroundImage: 'url("./assets/SF6_Background.jpeg")',
-            }}
-          />
-          }
         <div className='App'>
+            <Navbar/>
             {element}
         </div>
       </ThemeProvider>

@@ -26,6 +26,7 @@ export type Player = {
     Character: string,
     Usercode: string,
     Country: string,
+    League: string,
 }
 
 export type CharacterToPlayers = {

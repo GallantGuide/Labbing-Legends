@@ -42,7 +42,7 @@ function useCountryPlayerCountData({ playerLimit }: CountryPlayerCountDataProps)
         delete countryToPlayerCount["Other"]
         let otherPlayerCount = 0
         for(const [country, playerCount] of Object.entries(countryToPlayerCount)){
-            if(country != "Other" && playerCount <= 5){
+            if(country != "Other" && playerCount <= 10){
                 otherPlayerCount += playerCount
                 delete countryToPlayerCount[country]
             }
