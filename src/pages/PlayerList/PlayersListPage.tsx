@@ -25,7 +25,7 @@ function PlayersListPage() {
     const [countries, setCountries] = useState<string>()
     const [selectedCharacter, setSelectedCharacter] = useState<string | null>(characterName || null)
     const [searchValue, setSearchValue] = useState("")
-    
+
     const { characterToPlayersByMR, playersListByMR } = useRankData({playerLimit})
 
     useEffect(() => {
@@ -73,10 +73,11 @@ function PlayersListPage() {
     useEffect(() => {
         if (selectedCharacter && characterRefs.current[selectedCharacter]) {
             // console.log(characterRefs.current[selectedCharacter])
-            
+            console.log(characterRefs.current[selectedCharacter])
             characterRefs.current[selectedCharacter]?.scrollIntoView({
                 behavior: "smooth",
                 inline: "center", // Center the selected character in the scroll area
+                block: "center"
             })
         }
     }, [selectedCharacter])
