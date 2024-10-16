@@ -17,7 +17,7 @@ function useCountryPlayerCountData({ playerLimit }: CountryPlayerCountDataProps)
                 const country: string = player["Country"]
                 const userCode: string = player["Usercode"]
 
-                if(!(seenUsercodes.has(userCode))){                        
+                if(!(seenUsercodes.has(userCode))){
                     seenUsercodes.add(userCode)
                     if(country in countryToPlayerCount){
                         countryToPlayerCount[country] ++

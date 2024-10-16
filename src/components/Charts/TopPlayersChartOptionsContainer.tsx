@@ -47,8 +47,8 @@ export function useTopPlayersChartOptions({ sortCriteria, showMR, playerLimit }:
 
     // Constants for icon size and padding
     const iconWidth = 60  // TODO: change icon size
-    const iconPadding = 1 
-    const chartWidth = (iconWidth + iconPadding) * xAxisCategories.length  
+    const iconPadding = 3
+    const chartWidth = (iconWidth + iconPadding) * xAxisCategories.length
     
     const options: Highcharts.Options = {
         credits: {
@@ -131,6 +131,7 @@ export function useTopPlayersChartOptions({ sortCriteria, showMR, playerLimit }:
         xAxis: {
             categories: xAxisCategories,
             title:{
+                margin: 10,
                 text: 'Character',
                 style: {
                     color: 'white',

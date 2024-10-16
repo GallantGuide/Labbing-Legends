@@ -16,6 +16,16 @@ const customTheme = createTheme({
     // fontFamily: 'Komika',
     // fontFamily: 'Roboto, Helvetica, Arial, sans-serif'
   },
+  components:{
+    // MuiToolbar:{
+    //   styleOverrides:{
+    //     root:{
+    //       minHeight: 30,
+    //     }
+    //   },
+      
+    // }
+  }
 })
 
 function App() {
@@ -30,7 +40,7 @@ function App() {
     //     // }
     //   // ]
     // },
-    {
+    {// FIXME: should have global constants for these
       path: "/",
       element: <Home/>
     },

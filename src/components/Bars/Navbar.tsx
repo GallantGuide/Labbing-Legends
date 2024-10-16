@@ -5,9 +5,10 @@ import { SxProps } from "@mui/material";
 
 import "./navbar.css"
 import { color } from "highcharts";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Navbar() {
+    const location = useLocation()
     const navigate = useNavigate()
 
     const navbarStyle: SxProps = {
@@ -23,27 +24,34 @@ function Navbar() {
         color: 'white',
         display: 'block',
         fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
-        fontWeight: 1000,
+        fontWeight: 800,
         textDecoration: 'none',
         marginRight: 2,
     }
 
+    const toolbarStyle: SxProps = {
+        minHeight: 55
+    }
+
     const handleButtonClick = (e: any) => {
-        console.log(e.target.textContent)
+        // console.log(e.target.textContent)
         const page = e.target.textContent
         switch(page){
             case "Players List":
-                navigate('/players/')
+                // FIXME: should have global constants for these
+                if(!location.pathname.includes("/players"))
+                    navigate('/players/')
                 break
             case 'Top Players Chart':
-                navigate('/')
+                if(!(location.pathname === "/"))
+                    navigate('/')
                 break
         }
     }
 
     return(
         <AppBar sx={navbarStyle} position="sticky">
-            <Toolbar sx={{}} disableGutters>
+            <Toolbar sx={toolbarStyle} variant="dense">
                 <Button onClick={handleButtonClick} sx={buttonStyle}>Top Players Chart</Button>
                 <Button onClick={handleButtonClick} sx={buttonStyle}>Players List</Button>
                 <Button onClick={handleButtonClick} sx={buttonStyle}>Esports</Button>
