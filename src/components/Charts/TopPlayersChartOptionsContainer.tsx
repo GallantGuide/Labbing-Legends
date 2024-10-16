@@ -1,9 +1,8 @@
-import { charnameToIcon } from "../../Data/Icons";
+import { charnameToIcon } from "../../Data/Icons/Characters/Named/CharacterNamedIcons"; 
 
 import { useState, useEffect, useMemo, useRef } from "react"
 import { useTopPlayersChartData } from "./TopPlayersChartDataContainer";
 import { ChartsDataProps } from "../../Data/Types";
-import { color } from "highcharts";
 
 export function useTopPlayersChartOptions({ sortCriteria, showMR, playerLimit }: ChartsDataProps){
     const { xAxisCategories, barDataByPlayerCount, barDataByMRintervals, totalPlayers } = useTopPlayersChartData({ sortCriteria, showMR, playerLimit })

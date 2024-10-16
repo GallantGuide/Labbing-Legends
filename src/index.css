@@ -50,7 +50,11 @@
 }
 
 
-
+img {
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+}
 
 /* a {
   font-weight: 500;

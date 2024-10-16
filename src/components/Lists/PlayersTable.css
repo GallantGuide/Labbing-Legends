@@ -1,4 +1,10 @@
-.playerCountry{
-    height: 10%;
-    width: 10%;
+.playerCountry,
+.league-icon{
+    height: 23px;
+    width: 35px;
+}
+
+.character-icon{
+    height: 60px;
+    width: 60px;
 }

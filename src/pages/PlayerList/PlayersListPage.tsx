@@ -1,15 +1,16 @@
-import { countryToIcon, charnameToCardIcon } from "../../Data/Icons"
-
 import { useState, useRef, useEffect, CSSProperties } from "react";
 import { useRankData } from "../../components/RankDataContainer"
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 
 import { Player } from "../../Data/Types";
 
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, FormControl, FormControlLabel, FormLabel, RadioGroup, Radio, Select, MenuItem, InputLabel,} from "@mui/material"
-
 import "./PlayersListPage.css"
-import useCountryPlayerCountData from "../../components/Panels/CountryPlayerCountDataContainer";
+import PlayerListCountryFilter from "../../components/Filters/PlayerListCountryFilter";
+import PlayerListPlayerFilter from "../../components/Filters/PlayerListPlayerFilter";
+import PlayerListCharacterFilter from "../../components/Filters/PlayerListCharacterFilter";
+import PlayersTable from "../../components/Lists/PlayersTable";
+
+import { Box, Slider, SxProps } from "@mui/material";
 
 function PlayersListPage() {
     const location = useLocation()
@@ -21,12 +22,14 @@ function PlayersListPage() {
     const characterName = decodeURIComponent(location.pathname.split("/players/")[1])
 
     const [playerLimit, setPlayerLimit] = useState(location.state?.playerLimit || 100)
-    const [players, setPlayers] = useState<Player[]>()
-    const [countries, setCountries] = useState<string>()
+    //TODO: problem is playerLimit
+    const { characterToPlayersByMR, playersListByMR, allCountries } = useRankData({playerLimit})
+    const [players, setPlayers] = useState<Player[]>([])
     const [selectedCharacter, setSelectedCharacter] = useState<string | null>(characterName || null)
+    const [selectedCountry, setSelectedCountry] = useState<string | null>(null)
     const [searchValue, setSearchValue] = useState("")
+    const [pl, setPl] = useState(100)
 
-    const { characterToPlayersByMR, playersListByMR } = useRankData({playerLimit})
 
     useEffect(() => {
         // console.log(selectedCharacter)
@@ -41,14 +44,15 @@ function PlayersListPage() {
         }
         // console.log(tmp)
         if(tmp)
-            setPlayers(tmp.filter((player) => (player.CFN).toLowerCase().includes(searchValue.toLowerCase())))
+            setPlayers(tmp.filter((player) => ((player.CFN).toLowerCase().includes(searchValue.toLowerCase()) && (selectedCountry? player.Country === selectedCountry : true))))
+            
         else
             setPlayers([])
 
         // update URL
         navigate(`/players/${selectedCharacter || ""}`, { replace: true})
         
-    }, [characterToPlayersByMR, playersListByMR, selectedCharacter, searchValue])
+    }, [characterToPlayersByMR, playersListByMR, selectedCharacter, searchValue, selectedCountry])
 
     useEffect(() => {
         const container = charFilterContainer.current
@@ -102,130 +106,86 @@ function PlayersListPage() {
         console.log(searchInput)
         setSearchValue(searchInput)
     }
-    
-    const tableHeadCategories = ["Rank", "Name", "Country", "League", "MR"]
-    const tableContainerStyle = {
-        border: '1px solid rgb(65, 63, 63);',
-        borderRadius: 2,
-        maxWidth: 1000,
-        fontSize: 12,
-        backgroundColor: '#252527',
-        opacity: 0.95,
-        marginBottom: 5,
-    }
-    const tableHeadStyle = {
-        color: 'white',
-        padding: 2,
+
+    const handleCountryChange = (e: any) => {
+        console.log(e.target.value)
+        const country = e.target.value
+        if(country === "World")
+            setSelectedCountry(null)
+        else
+            setSelectedCountry(country)
     }
 
-    
-    const characterLabelStyle = (idx: number, isSelected: boolean): CSSProperties => ({
-        paddingLeft: idx != 1? 4 : 0,
-        filter: !isSelected? 'grayscale(100%)' : 'grayscale(0%)'
-    })
+    const handlePlayerCountChange = (e: any, newValue: number | number[]) => {
+        // console.log(newValue  as number)
+        setPlayerLimit(newValue as number)
+    }
+
+    const handlePlChange = (e: any, newValue: number | number[]) => {
+        // console.log(newValue  as number)
+        setPl(newValue as number)
+    }
     
     const filterBarContainerStyle: CSSProperties = {
-        display: 'flex', alignItems: 'center', 
+        display: 'flex', alignItems: 'center',
         maxWidth: 1000,maxHeight: 50,
         marginBottom: 10, padding: '5px 6px 5px 8px',
         boxSizing: 'border-box',
         backgroundColor: '#1c1e22', border: '1px solid rgb(65, 63, 63)', borderRadius: 8,
     }
 
-    const characterFilterContainerStyle: CSSProperties = {
-        display: 'flex', alignItems: 'center', 
-        overflowX: 'hidden', scrollbarWidth: 'thin', whiteSpace: 'nowrap',
-    }
-    const characterImgStyle: CSSProperties = {
-        height: 35, width: 45,
-        borderRadius: 4, border: '1px solid black',
-        cursor: 'pointer', 
+    const playerCountSliderMarks = [
+        {
+            value: 0,
+        },
+        {
+            value: 100,
+        },
+        {
+            value: 500,
+        },
+        {
+            value: 1000,
+        },
+        {
+            value: 2000,
+        },
+    ]
+
+    const playerCountFilterContainerStyle: SxProps = {
+        marginRight: '10px',
+        padding: '0px 10px',
+        width: 300,
     }
 
-    const playerFilterContainerStyle: CSSProperties = {
-        marginRight: 10,
-    }
+    const playerCountSliderStyle: SxProps = {
 
-    const playerSearchStyle: CSSProperties = {
-        minHeight: 25,
-        outline: 'none',
-        borderRadius: 3,
-    }
-
-    const countryFilterContainerStyle: CSSProperties = {
-        marginRight: 10
-    }
-
-    const countrySelectStyle: CSSProperties = {
-        minWidth: 150, minHeight: 25,
-        padding: '0.4em 6em 0.4em 1em',
-        cursor: 'pointer', outline: 'none',
-        borderRadius: 5, 
     }
 
     return(
         <div className="playerlist-page" style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
             <div className="filter-bar" style={filterBarContainerStyle}>
-                <div className="player-filter" style={playerFilterContainerStyle}>
-                    <input value={searchValue} placeholder="Search player" onChange={handleSearchValueChange}
-                        style={playerSearchStyle}
+                <PlayerListPlayerFilter handleSearchValueChange={handleSearchValueChange} searchValue={searchValue}/>
+                <PlayerListCountryFilter handleCountryChange={handleCountryChange} allCountries={allCountries}/>
+                <Box className="player-counter-filter" sx={playerCountFilterContainerStyle}>
+                    <Slider
+                        value={playerLimit}
+                        step={null}
+                        min={100}
+                        max={2000}
+                        // onChangeCommitted={handlePlayerCountChange}
+                        onChange={handlePlayerCountChange}
+                        valueLabelDisplay="auto"
+                        marks={playerCountSliderMarks}
                     />
-                </div>
-                <div className="country-filter" style={countryFilterContainerStyle}>
-                    <select className="country-select" style={countrySelectStyle}>
-                        {/* {countryToPlayerCount && countryToPlayerCount.map(([country,]) => {
-                            return(
-                                <option key={country}>
-                                    {country}
-                                </option>
-                            )
-                        })} */}
-                    </select>
-                </div>
-                <form className="character-filter" ref={charFilterContainer}
-                    style={characterFilterContainerStyle}
-                >
-                    {Object.keys(charnameToCardIcon).map((charName, idx) => {
-                            if(charName == "Random") return ""
-                            const isSelected = selectedCharacter === charName
-                            return(
-                                <div ref={(el) => characterRefs.current[charName] = el} key={idx} style={characterLabelStyle(idx, isSelected)}>
-                                    <input type="radio"  id={charName} checked={isSelected} value={charName} onChange={handleCharacterRadioGroupChange} onClick={handleCharacterRadioGroupClick} style={{display: 'none'}}/>
-                                    <label htmlFor={charName} style={{display: 'flex'}}>
-                                        <img src={charnameToCardIcon[charName]} alt={charName} style={characterImgStyle}/>
-                                    </label>
-                                </div>
-                            )
-                    })}
-                </form>
+                </Box>
+                <PlayerListCharacterFilter
+                    charFilterContainer={charFilterContainer} characterRefs={characterRefs}
+                    selectedCharacter={selectedCharacter}
+                    handleCharacterRadioGroupChange={handleCharacterRadioGroupChange} handleCharacterRadioGroupClick={handleCharacterRadioGroupClick}
+                />
             </div>
-            <TableContainer sx={tableContainerStyle} component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow sx={{backgroundColor: '#1c1e22', }}>
-                            {tableHeadCategories.map((category, idx) => {
-                                return(<TableCell key={idx} sx={tableHeadStyle} align={"center"}>{category}</TableCell>)
-                            })}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {players? players.map((player, idx) => (
-                            <TableRow
-                                key={player.Usercode + player.Character}
-                            >
-                                <TableCell sx={{color: 'white',}} component="th" scope="row" align="center">
-                                    {player.Rank}
-                                </TableCell>
-                                <TableCell sx={{color: 'white', paddingLeft: 12}} align="left">{player.CFN}</TableCell>
-                                <TableCell sx={{color: 'white',}} align="center"><img className="playerCountry" loading="lazy" alt={player.Country} src={countryToIcon[player.Country]} /></TableCell>
-                                <TableCell sx={{color: 'white',}} align="center">{player.League.includes("37")? "Legend" : "Master"}</TableCell>
-                                <TableCell sx={{color: 'white',}} align="center">{player.MR}</TableCell>
-                                {/* {<img style={{height: 100, width: 100}} src={LEGEND_ICON}/>} */}
-                            </TableRow>
-                        )):[]}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <PlayersTable players={players} selectedCharacter={selectedCharacter}/>
         </div>
     )
 }

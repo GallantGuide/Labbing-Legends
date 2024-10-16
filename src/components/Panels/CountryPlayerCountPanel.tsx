@@ -1,4 +1,4 @@
-import { countryToIcon } from "../../Data/Icons";
+import { countryToIcon } from "../../Data/Icons/Countries/CountryIcons"; 
 
 import React from "react";
 import { useState, useEffect, useMemo } from "react";

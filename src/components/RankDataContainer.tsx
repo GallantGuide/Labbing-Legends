@@ -9,19 +9,7 @@ type RankDataProps = {
 }
 
 export function useRankData({ playerLimit }: RankDataProps){
-    const [rankData, setRankData] = useState<PlayerDataList>([])
-    const [rankMetadata, setRankMetadata] = useState<string[]>([])
-    
-    // memoize?
-    useEffect(() => {
-        // fetch data from json file (API call in future)
-        setRankData(ranks["data"])
-        setRankMetadata(ranks["columns"])
-    },[ranks["data"]])
-
-    // function getRankData(): PlayerDataList{
-    //     return ranks["data"]
-    // }
+    const rankData = ranks["data"]
 
     function getCharacterPlayerCountPairs() : CharacterPlayerCountPairs {
         const data: PlayerDataList = rankData.slice(0, playerLimit? playerLimit : 500)
@@ -99,9 +87,26 @@ export function useRankData({ playerLimit }: RankDataProps){
         return tmp
     }
 
+    function getAllCountries() : string[] {
+        const data: PlayerDataList = rankData.slice(0, playerLimit? playerLimit : 500)
+        const seen: Set<string> = new Set()
+        const tmp: string[] = []
+
+        data.forEach((player) =>{
+            const country = player[6].toString()
+            if(!(seen.has(country))){
+                seen.add(country)
+                tmp.push(country)
+            }
+        })
+
+        return tmp
+    }
+
     const characterPlayerCountPairs: CharacterPlayerCountPairs = useMemo(() => getCharacterPlayerCountPairs(), [rankData, playerLimit])
     const characterToPlayersByMR: CharacterToPlayers = useMemo(() => getCharacterToPlayersByMR(), [rankData, playerLimit])
     const playersListByMR: Player[] = useMemo(() => getPlayersListByMR(), [rankData, playerLimit])
+    const allCountries: string[] = useMemo(() => getAllCountries(), [rankData, playerLimit])
 
-    return {rankData, rankMetadata, characterPlayerCountPairs, characterToPlayersByMR, playersListByMR}
+    return {rankData, characterPlayerCountPairs, characterToPlayersByMR, playersListByMR, allCountries}
 }
