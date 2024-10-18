@@ -128,7 +128,7 @@ function PlayersListPage() {
     
     const filterBarContainerStyle: CSSProperties = {
         display: 'flex', alignItems: 'center',
-        maxWidth: 1000,maxHeight: 50,
+        maxWidth: 1000, maxHeight: 50,
         marginBottom: 10, padding: '5px 6px 5px 8px',
         boxSizing: 'border-box',
         backgroundColor: '#1c1e22', border: '1px solid rgb(65, 63, 63)', borderRadius: 8,
@@ -162,12 +162,17 @@ function PlayersListPage() {
 
     }
 
+    const playerListPageStyle: CSSProperties = {
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', 
+        height: '100vh', overflow: 'hidden'
+    }
+
     return(
-        <div className="playerlist-page" style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
+        <div className="playerlist-page" style={playerListPageStyle}>
             <div className="filter-bar" style={filterBarContainerStyle}>
                 <PlayerListPlayerFilter handleSearchValueChange={handleSearchValueChange} searchValue={searchValue}/>
                 <PlayerListCountryFilter handleCountryChange={handleCountryChange} allCountries={allCountries}/>
-                <Box className="player-counter-filter" sx={playerCountFilterContainerStyle}>
+                {/* <Box className="player-counter-filter" sx={playerCountFilterContainerStyle}>
                     <Slider
                         value={playerLimit}
                         step={null}
@@ -178,14 +183,16 @@ function PlayersListPage() {
                         valueLabelDisplay="auto"
                         marks={playerCountSliderMarks}
                     />
-                </Box>
+                </Box> */}
                 <PlayerListCharacterFilter
                     charFilterContainer={charFilterContainer} characterRefs={characterRefs}
                     selectedCharacter={selectedCharacter}
                     handleCharacterRadioGroupChange={handleCharacterRadioGroupChange} handleCharacterRadioGroupClick={handleCharacterRadioGroupClick}
                 />
             </div>
-            <PlayersTable players={players} selectedCharacter={selectedCharacter}/>
+            <div style={{display: 'flex', flexGrow: 1, flexDirection: 'column', overflow: 'hidden', width: '100%', maxWidth: 1140, margin: '0px auto'}}>
+                <PlayersTable players={players} selectedCharacter={selectedCharacter}/>
+            </div>
         </div>
     )
 }

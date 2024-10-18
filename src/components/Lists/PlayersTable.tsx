@@ -2,7 +2,7 @@ import { legendIcon, masterIcon } from "../../Data/Icons"
 import { charnameToCardIcon } from "../../Data/Icons/Characters/Cards/CharacterCardIcons"
 import { charnameToIcon } from "../../Data/Icons/Characters/Unnamed/CharacterUnnamedIcons"
 import { countryToIcon } from "../../Data/Icons/Countries/CountryIcons"
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material"
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, SxProps } from "@mui/material"
 
 import { Player } from "../../Data/Types"
 
@@ -15,14 +15,20 @@ type PlayersTableDataProps = {
 
 export default function PlayersTable({ players, selectedCharacter }: PlayersTableDataProps){
 
-    const tableContainerStyle = {
+    const tableContainerStyle: SxProps = {
         border: '1px solid rgb(65, 63, 63);',
         borderRadius: 3,
-        width: 1000,
+        width: 1000, 
         fontSize: 12,
         backgroundColor: '#252527',
         opacity: 0.95,
         marginBottom: 5,
+        
+        scrollbarWidth: 'thin',
+        
+
+        flexGrow: 1,
+        overflowY: 'auto',
     }
 
     const tableHeadStyle = {
@@ -54,7 +60,7 @@ export default function PlayersTable({ players, selectedCharacter }: PlayersTabl
                             </TableCell>
                             <TableCell id="cfn" sx={{color: 'white', paddingLeft: 8}} align="left">{player.CFN}</TableCell>
                             {!selectedCharacter &&
-                                <TableCell id="character">
+                                <TableCell id="character" align="center">
                                     <img className="character-icon" src={charnameToIcon[player.Character]} style={{textAlign: 'center'}} />
                                 </TableCell>
                             }

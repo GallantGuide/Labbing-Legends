@@ -42,9 +42,12 @@ function Navbar() {
                 if(!location.pathname.includes("/players"))
                     navigate('/players/')
                 break
-            case 'Top Players Chart':
+            case 'Rank Character Chart':
                 if(!(location.pathname === "/"))
                     navigate('/')
+                break
+            case 'Tournament Character Chart':
+                navigate('/esports/')
                 break
         }
     }
@@ -52,9 +55,9 @@ function Navbar() {
     return(
         <AppBar sx={navbarStyle} position="sticky">
             <Toolbar sx={toolbarStyle} variant="dense">
-                <Button onClick={handleButtonClick} sx={buttonStyle}>Top Players Chart</Button>
+                <Button onClick={handleButtonClick} sx={buttonStyle}>Rank Character Chart</Button>
                 <Button onClick={handleButtonClick} sx={buttonStyle}>Players List</Button>
-                <Button onClick={handleButtonClick} sx={buttonStyle}>Esports</Button>
+                <Button onClick={handleButtonClick} sx={buttonStyle}>Tournament Character Chart</Button>
             </Toolbar>
         </AppBar>
     )

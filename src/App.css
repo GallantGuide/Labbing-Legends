@@ -1,8 +1,9 @@
 .App {
 
-  height: max-content;
-  min-height: 100vh;
-
+  /* height: max-content; */
+  /* max-height: 100vh; */
+  
+  height: 100vh;
   width: 100vw;
 
   display: flex;
@@ -16,7 +17,16 @@
 
   flex-grow: 1;
 
-  background-image: url("./assets/SF6_Background.jpeg");
+  /* background-image: url("./assets/SF6_Background.jpeg"); */
+  background-image: url("./assets/5.svg")
+  
+  /* background-image:
+    url("./assets/4.svg"),
+    url("./assets/SF6_background.jpeg");
+  background-repeat:
+    no-repeat,
+    repeat-y; */
+  /* background-image: url("./assets/6.svg"); */
   /* background-repeat: no-repeat; */
   /* background-size: cover; */
 }

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useTopPlayersChartOptions } from "../../components/Charts/TopPlayersChartOptionsContainer";
+import { useTopPlayersChartOptions } from "../../components/Charts/RankedCharacterChart/TopPlayersChartOptionsContainer";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
@@ -11,6 +11,7 @@ import CountryPlayerCountPanel from "../../components/Panels/CountryPlayerCountP
 import { GlobalContext } from "../GlobalProvider";
 
 import "./Home.css"
+import { useTournamentCharacterChartData } from "../../components/Charts/TournamentCharacterChart/TournamentCharacterChartDataContainer";
 
 function Home(){
     const navigate = useNavigate()
@@ -24,9 +25,14 @@ function Home(){
 
     const { options } = useTopPlayersChartOptions({sortCriteria, showMR, playerLimit})
 
+    // const { xAxisCategories, barDataByPlayerCount, barDataByPlacementIntervals } = useTournamentCharacterChartData({  })
+
     // Update location state, and add/remove listeners on icons
     // Potential performance hit by adding listeners everytime states update
     useEffect(() => {
+        // console.log(xAxisCategories)
+        // console.log(barDataByPlayerCount)
+        // console.log(barDataByPlacementIntervals)
         // Store current states in location.state
         navigate("/", { replace: true, state: {sortCriteria, showMR, playerLimit} })
 

@@ -50,5 +50,20 @@ export type ChartsDataProps = {
     playerLimit: number
 }
 
+export type TourneyPlayer = {
+    Name: string,
+    Placement: number,
+    Character: string,
+    Event: string,
+    Region: string,
+    TournamentType: string,
+    Residence: string,
+    Date: string,
+    Phase: string,
+    SetWon: number,
+    SetLost: number,
+}
 
-
+export type CharacterToTourneyPlayers = {
+    [Character: string]: TourneyPlayer[]
+}

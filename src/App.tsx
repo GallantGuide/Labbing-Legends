@@ -9,6 +9,7 @@ import { createTheme, ThemeProvider } from '@mui/material'
 
 import { GlobalProvider } from './pages/GlobalProvider'
 import Navbar from './components/Bars/Navbar'
+import TournamentChartPage from './pages/Esports/TournamentChartPage'
 
 // Global themes for MUI components
 const customTheme = createTheme({
@@ -47,6 +48,10 @@ function App() {
     {
       path: "/players/:character?",
       element: <PlayersListPage/>
+    },
+    {
+      path: "/esports/",
+      element: <TournamentChartPage/>
     }
   ])
 

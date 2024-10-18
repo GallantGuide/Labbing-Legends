@@ -1,99 +1,83 @@
 import { useState, useEffect, useMemo } from "react";
-import { CharacterToPlayers, StringToNumber, Player, PlayerDataList, CharacterPlayerCountPairs } from "../Data/Types";
+import { CharacterToPlayers, StringToNumber, Player, CharacterPlayerCountPairs } from "../Data/Types";
+
+import { allCharacters } from "../Data/StaticData";
 
 // import ranks from "../Data/Ranksv5.json"
-import ranks from "../Data/Players10_14_24.json"
+import ranks from "../Data/Players10_16_24v2.json"
 
 type RankDataProps = {
     playerLimit?: number
 }
 
 export function useRankData({ playerLimit }: RankDataProps){
-    const rankData = ranks["data"]
+    const rankData = ranks
+
+    function getFilteredData(): Player[]{
+        return rankData.slice(0, playerLimit? playerLimit : 500)
+    }
 
     function getCharacterPlayerCountPairs() : CharacterPlayerCountPairs {
-        const data: PlayerDataList = rankData.slice(0, playerLimit? playerLimit : 500)
+        const data: Player[] = getFilteredData()
         const tmp: StringToNumber = {}
 
         data.forEach((player) => {
-            const charName = player[4]
+            const charName = player.Character
             if (charName in tmp)
                 tmp[charName]++
             else
                 tmp[charName] = 1
         })
 
+        allCharacters.forEach((charName) =>{
+            if(!(charName in tmp)){
+                tmp[charName] = 0
+            }
+        })
+
         return Object.entries(tmp).sort(([, freqA],[,freqB]) => freqA-freqB)
     }
 
     function getCharacterToPlayersByMR() : CharacterToPlayers{
-        const data: PlayerDataList = rankData.slice(0, playerLimit? playerLimit : 500)
+        const data: Player[] = getFilteredData()
         const tmp: CharacterToPlayers = {}
 
         for(const player of data){
-            const charName = player[4]
-            const playerCFN = player[1]
-            const playerRank = player[2]
-            const playerMR = player[3]
-            const userCode = player[5]
-            const country = player[6]
-            const league = player[7]
-
-            const playerObj: Player = {
-                CFN : playerCFN.toString(),
-                Rank: playerRank.toString(),
-                MR: playerMR.toString(),
-                Character: charName.toString(),
-                Usercode: userCode.toString(),
-                Country: country.toString(),
-                League: league.toString(),
-            }
+            const charName = player.Character
 
             if (charName in tmp)
-                tmp[charName].push(playerObj)
+                tmp[charName].push(player)
             else
-                tmp[charName] = [playerObj]
+                tmp[charName] = [player]
         }
+
+        allCharacters.forEach((charName) =>{
+            if(!(charName in tmp)){
+                tmp[charName] = []
+            }
+        })
 
         return tmp
     }
 
     function getPlayersListByMR(): Player[] {
-        const data: PlayerDataList = rankData.slice(0, playerLimit? playerLimit : 500)
+        const data: Player[] = getFilteredData()
         const tmp: Player[] = []
 
         for(const player of data){
-            const charName = player[4]
-            const playerCFN = player[1]
-            const playerRank = player[2]
-            const playerMR = player[3]
-            const userCode = player[5]
-            const country = player[6]
-            const league = player[7]
-
-            const playerObj: Player = {
-                CFN : playerCFN.toString(),
-                Rank: playerRank.toString(),
-                MR: playerMR.toString(),
-                Character: charName.toString(),
-                Usercode: userCode.toString(),
-                Country: country.toString(),
-                League: league.toString(),
-            }
-
-            tmp.push(playerObj)
+            tmp.push(player)
         }
 
         return tmp
     }
 
     function getAllCountries() : string[] {
-        const data: PlayerDataList = rankData.slice(0, playerLimit? playerLimit : 500)
+        const data: Player[] = getFilteredData()
         const seen: Set<string> = new Set()
         const tmp: string[] = []
 
         data.forEach((player) =>{
-            const country = player[6].toString()
+            const country = player.Country
             if(!(seen.has(country))){
                 seen.add(country)
                 tmp.push(country)
