@@ -94,8 +94,8 @@ export function useTournamentCharacterChartOptionsContainer({ showPlacements, re
                     inactive: {
                         enabled: true,
                         opacity: 0.6
-                    }
-                }
+                    },
+                },
             }
         },
         legend: {
@@ -108,7 +108,9 @@ export function useTournamentCharacterChartOptionsContainer({ showPlacements, re
             borderWidth: 1,
             borderRadius: 5,
             backgroundColor: '#FFFFFF',
-            shadow: true
+            shadow: true,
+            events:{}
+
         },
         tooltip: {
             valueSuffix: ' players'

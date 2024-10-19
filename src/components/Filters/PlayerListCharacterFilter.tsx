@@ -15,18 +15,39 @@ export default function PlayerListCharacterFilter({
 PlayerListCharacterFilterProps
 ) {
     const characterLabelStyle = (idx: number, isSelected: boolean): CSSProperties => ({
-        paddingLeft: idx != 1? 4 : 0,
-        filter: !isSelected? 'grayscale(100%)' : 'grayscale(0%)'
+        // paddingLeft: idx != 1? 4 : 0,
+        filter: (!isSelected && selectedCharacter)? 'grayscale(100%)' : 'grayscale(0%)'
     })
+
     const characterFilterContainerStyle: CSSProperties = {
-        display: 'flex', alignItems: 'center',
-        overflowX: 'hidden', scrollbarWidth: 'thin', whiteSpace: 'nowrap',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 0fr)', gridTemplateRows: 'repeat(6, 0fr)',
+        columnGap: 5, rowGap: 5,
+
+        backgroundColor: '#1c1e22',
+        border: '1px solid rgb(65, 63, 63)',
+        borderRadius: '9px',
+
+        boxSizing: 'border-box',
+
+        padding: 3,
+        marginLeft: 10,
+
+        //FIXME: Bad solution for now
+        position: 'absolute',
+        left: 'calc(50% + 500px)',
     }
-    const characterImgStyle: CSSProperties = {
-        height: 35, width: 45,
-        borderRadius: 4, border: '1px solid black',
+    const characterImgStyle = (idx:number, isSelected: boolean): CSSProperties => ({
+        height: 45, width: 55,
+
+        borderRadius: 9, 
+        border: !isSelected? '1px solid black' : '1px solid #146DD1FF',
+
+
+
+        boxSizing: 'border-box',
         cursor: 'pointer',
-    }
+    })
 
     return(
         <form className="character-filter" ref={charFilterContainer}
@@ -43,7 +64,7 @@ PlayerListCharacterFilterProps
                                 onChange={handleCharacterRadioGroupChange} onClick={handleCharacterRadioGroupClick}
                             />
                             <label htmlFor={charName} style={{display: 'flex'}}>
-                                <img src={charnameToCardIcon[charName]} alt={charName} style={characterImgStyle} draggable={false}/>
+                                <img src={charnameToCardIcon[charName]} alt={charName} style={characterImgStyle(idx, isSelected)} draggable={false}/>
                             </label>
                         </div>
                     )

@@ -1,11 +1,11 @@
 import { useEffect, useMemo } from "react"
-import esportsData from "../Data/Esport_DataV2.json"
+import esportsData from "../Data/Esport_Data_sort.json"
 import { CharacterToTourneyPlayers, StringToNumber, TourneyPlayer } from "../Data/Types"
 import { allCharacters } from "../Data/StaticData"
 
 type TournamentDataContainerProps = {
-    region: string,
-    offlineOnlineStatus: string,
+    region?: string,
+    offlineOnlineStatus?: string,
 }
 
 export function useTournamentData({ region, offlineOnlineStatus }: TournamentDataContainerProps){
@@ -70,10 +70,36 @@ export function useTournamentData({ region, offlineOnlineStatus }: TournamentDat
 
         return tmp
     }
+
+    function getPlayerListByEventAndPlacing(): TourneyPlayer[] {
+        const data: TourneyPlayer[] = filteredData
+        return data
+    }
+
+    function getAllCountries(): string[] {
+        const data: TourneyPlayer[] = filteredData
+        const seen: Set<string> = new Set()
+        const tmp: string[] = []
+
+        data.forEach((player) =>{
+            const country = player.Residence
+            if(!(seen.has(country))){
+                seen.add(country)
+                tmp.push(country)
+            }
+        })
+
+        return tmp
+    }
     
+    //Helper Data
     const filteredData: TourneyPlayer[] = useMemo(() => getFilteredData(), [tournamentPlayerData, region, offlineOnlineStatus])
+
+    //Returned Data
+    const playerListByEventAndPlacing: TourneyPlayer[] = useMemo(() => getPlayerListByEventAndPlacing(), [tournamentPlayerData, region, offlineOnlineStatus])
     const characterToPlayerCountPairs: [string, number][] = useMemo(() => getCharacterPlayerCountPairs(), [tournamentPlayerData, region, offlineOnlineStatus])
     const characterToPlayersByPlacement: CharacterToTourneyPlayers = useMemo(() => getCharacterToPlayersByPlacement(), [tournamentPlayerData, region, offlineOnlineStatus])
+    const tourneyPlayerCountries: string[] = useMemo(() => getAllCountries(), [tournamentPlayerData, region, offlineOnlineStatus])
 
-    return { characterToPlayersByPlacement, characterToPlayerCountPairs }
+    return { characterToPlayersByPlacement, characterToPlayerCountPairs, playerListByEventAndPlacing, tourneyPlayerCountries }
 }

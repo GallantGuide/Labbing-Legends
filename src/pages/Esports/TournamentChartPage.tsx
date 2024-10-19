@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import Highcharts from "highcharts"
 import HighchartsReact from "highcharts-react-official"
@@ -10,13 +10,48 @@ import { FormControlLabel, Switch, FormControl, FormLabel, RadioGroup, Radio, Ty
 import { tournamentRegions } from "../../Data/StaticData"
 
 import "../Home/Home.css"
+import { useLocation, useNavigate } from "react-router-dom"
 
 export default function TournamentChartPage(){
-    const [showPlacements, setShowPlacements] = useState<boolean>(false)
-    const [region, setRegion] = useState<string>("")
-    const [offlineOnlineStatus, setOfflineOnlineStatus] = useState<string>("")
+    const navigate = useNavigate()
+    const location = useLocation()
+
+    const [showPlacements, setShowPlacements] = useState<boolean>(location.state?.showPlacements || false)
+    const [region, setRegion] = useState<string>(location.state?.region || "")
+    const [offlineOnlineStatus, setOfflineOnlineStatus] = useState<string>(location.state?.offlineOnlineStatus || "")
 
     const { options } = useTournamentCharacterChartOptionsContainer({ showPlacements, region, offlineOnlineStatus })
+
+    useEffect(() => {
+        navigate("/esports/", { replace: true, state: {region, offlineOnlineStatus, showPlacements}})
+    },[region, offlineOnlineStatus, showPlacements])
+
+    useEffect(() => {
+        const chartContainer = document.querySelector('.highcharts-container')
+        if(chartContainer){
+            chartContainer.addEventListener('click', handleChartClick)
+        }
+
+        return () => {
+            if(chartContainer){
+                chartContainer.removeEventListener('click', handleChartClick)
+            }
+        }
+    }, [])
+
+    const handleChartClick = (e: any) => {
+        const playerDataType = "tournament"
+        
+        if("attributes" in e.target){
+            const attrbs = e.target["attributes"]
+            if(attrbs["class"] && attrbs["id"] && attrbs["class"].value == "character-icon"){
+                const charName = attrbs["id"].value
+                
+                // pass state values with navigation to players list page
+                navigate(`/players/${charName}`, {state: {playerDataType}})
+            }
+        }
+    }
 
     const handlePlacementsSwitch = (e: any) => {
         const isChecked = e.target.checked

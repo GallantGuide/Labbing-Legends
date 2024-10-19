@@ -27,15 +27,13 @@ function Home(){
 
     // const { xAxisCategories, barDataByPlayerCount, barDataByPlacementIntervals } = useTournamentCharacterChartData({  })
 
-    // Update location state, and add/remove listeners on icons
-    // Potential performance hit by adding listeners everytime states update
+    // Update location state
     useEffect(() => {
-        // console.log(xAxisCategories)
-        // console.log(barDataByPlayerCount)
-        // console.log(barDataByPlacementIntervals)
-        // Store current states in location.state
         navigate("/", { replace: true, state: {sortCriteria, showMR, playerLimit} })
-
+    }, [sortCriteria, showMR, playerLimit])
+    
+    // icon listeners
+    useEffect(() => {
         const chartContainer = document.querySelector('.highcharts-container')
         if(chartContainer){
             chartContainer.addEventListener('click', handleChartClick)
@@ -46,16 +44,18 @@ function Home(){
                 chartContainer.removeEventListener('click', handleChartClick)
             }
         }
-    }, [sortCriteria, showMR, playerLimit])
+    }, [playerLimit])
 
     const handleChartClick = (e: any) => {
+        const playerDataType = "ranked"
+
         if("attributes" in e.target){
             const attrbs = e.target["attributes"]
             if(attrbs["class"] && attrbs["id"] && attrbs["class"].value == "character-icon"){
                 const charName = attrbs["id"].value
                 
                 // pass state values with navigation to players list page
-                navigate(`/players/${charName}`, {state: { sortCriteria, showMR, playerLimit}})
+                navigate(`/players/${charName}`, {state: {playerLimit, playerDataType}})
             }
         }
     }

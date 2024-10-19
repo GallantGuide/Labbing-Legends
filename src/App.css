@@ -15,10 +15,9 @@
   /* background-color: #181818; */
   /* background-color: #181818; */
 
-  flex-grow: 1;
 
-  /* background-image: url("./assets/SF6_Background.jpeg"); */
-  background-image: url("./assets/5.svg")
+  background-image: url("./assets/SF6_Background.jpeg");
+  /* background-image: url("./assets/5.svg") */
   
   /* background-image:
     url("./assets/4.svg"),

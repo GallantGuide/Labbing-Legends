@@ -2,89 +2,118 @@ import { useState, useRef, useEffect, CSSProperties } from "react";
 import { useRankData } from "../../components/RankDataContainer"
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 
-import { Player } from "../../Data/Types";
+import { Player, TourneyPlayer } from "../../Data/Types";
 
 import "./PlayersListPage.css"
 import PlayerListCountryFilter from "../../components/Filters/PlayerListCountryFilter";
 import PlayerListPlayerFilter from "../../components/Filters/PlayerListPlayerFilter";
 import PlayerListCharacterFilter from "../../components/Filters/PlayerListCharacterFilter";
+import PlayerListLengthFilter from "../../components/Filters/PlayerListLengthFilter";
 import PlayersTable from "../../components/Lists/PlayersTable";
 
-import { Box, Slider, SxProps } from "@mui/material";
+import { Box, Slider, Stack, styled, Switch, SxProps, Typography, CircularProgress } from "@mui/material";
+import { useTournamentData } from "../../components/TournamentDataContainer";
 
 function PlayersListPage() {
     const location = useLocation()
     const navigate = useNavigate()
+
+    const [loading, setLoading] = useState<boolean>(false)
 
     const charFilterContainer = useRef<HTMLFormElement>(null)
     const characterRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
 
     const characterName = decodeURIComponent(location.pathname.split("/players/")[1])
 
+    // Passed states from charts
     const [playerLimit, setPlayerLimit] = useState(location.state?.playerLimit || 100)
-    //TODO: problem is playerLimit
-    const { characterToPlayersByMR, playersListByMR, allCountries } = useRankData({playerLimit})
-    const [players, setPlayers] = useState<Player[]>([])
+    const [pl, setPl] = useState(100)
+    const [playerDataType, setPlayerDataType] = useState(location.state?.playerDataType || "ranked")
+
+    const [players, setPlayers] = useState<Player[] | TourneyPlayer[]>([])
+    
+    // Filters
     const [selectedCharacter, setSelectedCharacter] = useState<string | null>(characterName || null)
     const [selectedCountry, setSelectedCountry] = useState<string | null>(null)
     const [searchValue, setSearchValue] = useState("")
-    const [pl, setPl] = useState(100)
+    // Ranked Filters 
+    const [phase, setPhase] = useState<number>(5)
+    const [phaseDate, setPhaseDate] = useState<Date | null>(null)
+    // Tournament Filters
+    const [region, setRegion] = useState<string>("")
+    const [tournamentType, setTournamentType] = useState<string>("")
 
+
+    // Data
+    const { characterToPlayersByMR, playersListByMR, playerCountries } = useRankData({ playerLimit })
+    const { characterToPlayersByPlacement, playerListByEventAndPlacing, tourneyPlayerCountries } = useTournamentData({ region })
+    
 
     useEffect(() => {
-        // console.log(selectedCharacter)
-        // console.log(playerLimit)
-        let tmp: Player[] = []
-        if(characterToPlayersByMR && selectedCharacter){
-            tmp = characterToPlayersByMR[selectedCharacter]
+        let tmp: Player[] | TourneyPlayer[] = []
+
+        if(playerDataType === "ranked"){
+            tmp = selectedCharacter? characterToPlayersByMR[selectedCharacter] : playersListByMR
+            if(selectedCountry)
+                tmp = tmp.filter((player) => player.Country === selectedCountry)
+            if(searchValue != "")
+                tmp = tmp.filter((player) => player.CFN.toLowerCase().includes(searchValue.toLowerCase()))
+            // Ranked specific filters
         }
-        else if(playersListByMR)
-        {
-            tmp = playersListByMR
+        else{ // "tournament"
+            tmp = selectedCharacter? characterToPlayersByPlacement[selectedCharacter] : playerListByEventAndPlacing
+            if(selectedCountry)
+                tmp = tmp.filter((player) => player.Residence === selectedCountry)
+            if(searchValue != "")
+                tmp = tmp.filter((player) => player.Name.toLowerCase().includes(searchValue.toLowerCase()))
+            if(region != "")
+                tmp = tmp.filter((player) => player.Region == region)
+            if(tournamentType != "")
+                tmp = tmp.filter((player) => player.TournamentType == tournamentType)
+            // Tournament specific filters
         }
         // console.log(tmp)
-        if(tmp)
-            setPlayers(tmp.filter((player) => ((player.CFN).toLowerCase().includes(searchValue.toLowerCase()) && (selectedCountry? player.Country === selectedCountry : true))))
-            
-        else
-            setPlayers([])
+        setLoading(false)
+        setPlayers(tmp)
 
         // update URL
         navigate(`/players/${selectedCharacter || ""}`, { replace: true})
         
-    }, [characterToPlayersByMR, playersListByMR, selectedCharacter, searchValue, selectedCountry])
+    }, [characterToPlayersByMR, playersListByMR, selectedCharacter, searchValue, selectedCountry,
+        characterToPlayersByPlacement, playerListByEventAndPlacing, region, tournamentType,
+        playerDataType])
 
-    useEffect(() => {
-        const container = charFilterContainer.current
-        if(container){
-            // Function to convert vertical scroll to horizontal
-            const handleWheelScroll = (event: WheelEvent) => {
-                if (event.deltaY !== 0) {
-                    event.preventDefault(); // Prevent the default vertical scroll behavior
-                    container.scrollLeft += event.deltaY; // Scroll horizontally instead
-                }
-            };
+    // useEffect(() => {
+    //     const container = charFilterContainer.current
+    //     if(container){
+    //         // Function to convert vertical scroll to horizontal
+    //         const handleWheelScroll = (event: WheelEvent) => {
+    //             if (event.deltaY !== 0) {
+    //                 event.preventDefault(); // Prevent the default vertical scroll behavior
+    //                 container.scrollLeft += event.deltaY; // Scroll horizontally instead
+    //             }
+    //         };
 
-            container.addEventListener('wheel', handleWheelScroll);
+    //         container.addEventListener('wheel', handleWheelScroll);
 
-            return () => {
-                container.removeEventListener('wheel', handleWheelScroll);
-            }
-        }
+    //         return () => {
+    //             container.removeEventListener('wheel', handleWheelScroll);
+    //         }
+    //     }
 
-    })
+    // })
 
-    useEffect(() => {
-        if (selectedCharacter && characterRefs.current[selectedCharacter]) {
-            // console.log(characterRefs.current[selectedCharacter])
-            console.log(characterRefs.current[selectedCharacter])
-            characterRefs.current[selectedCharacter]?.scrollIntoView({
-                behavior: "smooth",
-                inline: "center", // Center the selected character in the scroll area
-                block: "center"
-            })
-        }
-    }, [selectedCharacter])
+    // useEffect(() => {
+    //     if (selectedCharacter && characterRefs.current[selectedCharacter]) {
+    //         // console.log(characterRefs.current[selectedCharacter])
+    //         console.log(characterRefs.current[selectedCharacter])
+    //         characterRefs.current[selectedCharacter]?.scrollIntoView({
+    //             behavior: "smooth",
+    //             inline: "center", // Center the selected character in the scroll area
+    //             block: "center"
+    //         })
+    //     }
+    // }, [selectedCharacter])
 
     const handleCharacterRadioGroupChange = (e: any) => {
         const name = e.target.value
@@ -104,6 +133,7 @@ function PlayersListPage() {
     const handleSearchValueChange = (e: any) => {
         const searchInput = e.target.value
         console.log(searchInput)
+
         setSearchValue(searchInput)
     }
 
@@ -125,74 +155,88 @@ function PlayersListPage() {
         // console.log(newValue  as number)
         setPl(newValue as number)
     }
+
+    const AntSwitch = styled(Switch)(({ theme }) => ({
+        width: 28,
+        height: 16,
+        padding: 0,
+        display: 'flex',
+        '&:active': {
+          '& .MuiSwitch-thumb': {
+            width: 15,
+          },
+          '& .MuiSwitch-switchBase.Mui-checked': {
+            transform: 'translateX(9px)',
+          },
+        },
+        '& .MuiSwitch-switchBase': {
+          padding: 2,
+          '&.Mui-checked': {
+            transform: 'translateX(12px)',
+            color: '#fff',
+            '& + .MuiSwitch-track': {
+              opacity: 1,
+              backgroundColor: '#1890ff',
+              ...theme.applyStyles('dark', {
+                backgroundColor: '#177ddc',
+              }),
+            },
+          },
+        },
+        '& .MuiSwitch-thumb': {
+          boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
+          width: 12,
+          height: 12,
+          borderRadius: 6,
+          transition: theme.transitions.create(['width'], {
+            duration: 200,
+          }),
+        },
+        '& .MuiSwitch-track': {
+          borderRadius: 16 / 2,
+          opacity: 1,
+          backgroundColor: 'rgba(0,0,0,.25)',
+          boxSizing: 'border-box',
+          ...theme.applyStyles('dark', {
+            backgroundColor: 'rgba(255,255,255,.35)',
+          }),
+        },
+    }));
+
+    const handleDataTypeSwitch = (e:any) => {
+        const isChecked = e.target.checked
+        setPlayers([])
+        setLoading(true)
+        if(isChecked)
+            setPlayerDataType("ranked")
+        else
+            setPlayerDataType("tournament")
+    }
     
-    const filterBarContainerStyle: CSSProperties = {
-        display: 'flex', alignItems: 'center',
-        maxWidth: 1000, maxHeight: 50,
-        marginBottom: 10, padding: '5px 6px 5px 8px',
-        boxSizing: 'border-box',
-        backgroundColor: '#1c1e22', border: '1px solid rgb(65, 63, 63)', borderRadius: 8,
-    }
-
-    const playerCountSliderMarks = [
-        {
-            value: 0,
-        },
-        {
-            value: 100,
-        },
-        {
-            value: 500,
-        },
-        {
-            value: 1000,
-        },
-        {
-            value: 2000,
-        },
-    ]
-
-    const playerCountFilterContainerStyle: SxProps = {
-        marginRight: '10px',
-        padding: '0px 10px',
-        width: 300,
-    }
-
-    const playerCountSliderStyle: SxProps = {
-
-    }
-
-    const playerListPageStyle: CSSProperties = {
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', 
-        height: '100vh', overflow: 'hidden'
-    }
-
     return(
-        <div className="playerlist-page" style={playerListPageStyle}>
-            <div className="filter-bar" style={filterBarContainerStyle}>
-                <PlayerListPlayerFilter handleSearchValueChange={handleSearchValueChange} searchValue={searchValue}/>
-                <PlayerListCountryFilter handleCountryChange={handleCountryChange} allCountries={allCountries}/>
-                {/* <Box className="player-counter-filter" sx={playerCountFilterContainerStyle}>
-                    <Slider
-                        value={playerLimit}
-                        step={null}
-                        min={100}
-                        max={2000}
-                        // onChangeCommitted={handlePlayerCountChange}
-                        onChange={handlePlayerCountChange}
-                        valueLabelDisplay="auto"
-                        marks={playerCountSliderMarks}
-                    />
-                </Box> */}
-                <PlayerListCharacterFilter
-                    charFilterContainer={charFilterContainer} characterRefs={characterRefs}
-                    selectedCharacter={selectedCharacter}
-                    handleCharacterRadioGroupChange={handleCharacterRadioGroupChange} handleCharacterRadioGroupClick={handleCharacterRadioGroupClick}
-                />
+        <div className="playerlist-page">
+            <div className="filters-and-table">
+                <div className="filter-bar" >
+                    <PlayerListCountryFilter handleCountryChange={handleCountryChange} allCountries={playerDataType === "ranked"? playerCountries : tourneyPlayerCountries}/>
+                    {/* {(playerDataType && playerDataType === "ranked")?
+                        <PlayerListLengthFilter playerLimit={playerLimit} pl={pl} handlePlayerCountChange={handlePlayerCountChange} handlePlChange={handlePlChange}/> : ""
+                        } */}
+                    <PlayerListPlayerFilter handleSearchValueChange={handleSearchValueChange} searchValue={searchValue}/>
+                    <Stack direction="row" spacing={1} sx={{ alignItems: 'center', marginLeft: 1}}>
+                        <Typography color="white">T</Typography>
+                        <AntSwitch checked={playerDataType === "ranked"} onChange={handleDataTypeSwitch} inputProps={{ 'aria-label': 'ant design' }} />
+                        <Typography color="white">R</Typography>
+                    </Stack>
+                </div>
+                <div className="playertable-container">
+                    <PlayersTable players={players} selectedCharacter={selectedCharacter} playerDataType={playerDataType}/>
+                </div>
             </div>
-            <div style={{display: 'flex', flexGrow: 1, flexDirection: 'column', overflow: 'hidden', width: '100%', maxWidth: 1140, margin: '0px auto'}}>
-                <PlayersTable players={players} selectedCharacter={selectedCharacter}/>
-            </div>
+            <PlayerListCharacterFilter
+                charFilterContainer={charFilterContainer} characterRefs={characterRefs}
+                selectedCharacter={selectedCharacter}
+                handleCharacterRadioGroupChange={handleCharacterRadioGroupChange} handleCharacterRadioGroupClick={handleCharacterRadioGroupClick}
+            />
         </div>
     )
 }

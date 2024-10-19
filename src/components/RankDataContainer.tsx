@@ -90,7 +90,7 @@ export function useRankData({ playerLimit }: RankDataProps){
     const characterPlayerCountPairs: CharacterPlayerCountPairs = useMemo(() => getCharacterPlayerCountPairs(), [rankData, playerLimit])
     const characterToPlayersByMR: CharacterToPlayers = useMemo(() => getCharacterToPlayersByMR(), [rankData, playerLimit])
     const playersListByMR: Player[] = useMemo(() => getPlayersListByMR(), [rankData, playerLimit])
-    const allCountries: string[] = useMemo(() => getAllCountries(), [rankData, playerLimit])
+    const playerCountries: string[] = useMemo(() => getAllCountries(), [rankData, playerLimit])
 
-    return {rankData, characterPlayerCountPairs, characterToPlayersByMR, playersListByMR, allCountries}
+    return {rankData, characterPlayerCountPairs, characterToPlayersByMR, playersListByMR, playerCountries}
 }

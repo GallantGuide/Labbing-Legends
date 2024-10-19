@@ -8,7 +8,8 @@ type PlayerListPlayerFilterProps = {
 export default function PlayerListPlayerFilter({ searchValue, handleSearchValueChange}: PlayerListPlayerFilterProps) {
 
     const playerFilterContainerStyle: CSSProperties = {
-        marginRight: 10,
+        marginRight: 2,
+        marginLeft: 5,
     }
 
     const playerSearchStyle: CSSProperties = {
