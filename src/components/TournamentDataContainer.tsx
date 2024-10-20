@@ -89,6 +89,22 @@ export function useTournamentData({ region, offlineOnlineStatus }: TournamentDat
             }
         })
 
+        return tmp.sort()
+    }
+
+    function getAllTournamentRegions(): string[] {
+        const data: TourneyPlayer[] = filteredData
+        const seen: Set<string> = new Set()
+        const tmp: string[] = []
+
+        data.forEach((player) =>{
+            const region = player.Region
+            if(!(seen.has(region))){
+                seen.add(region)
+                tmp.push(region)
+            }
+        })
+
         return tmp
     }
     
@@ -100,6 +116,7 @@ export function useTournamentData({ region, offlineOnlineStatus }: TournamentDat
     const characterToPlayerCountPairs: [string, number][] = useMemo(() => getCharacterPlayerCountPairs(), [tournamentPlayerData, region, offlineOnlineStatus])
     const characterToPlayersByPlacement: CharacterToTourneyPlayers = useMemo(() => getCharacterToPlayersByPlacement(), [tournamentPlayerData, region, offlineOnlineStatus])
     const tourneyPlayerCountries: string[] = useMemo(() => getAllCountries(), [tournamentPlayerData, region, offlineOnlineStatus])
+    const tourneyRegions: string[] = useMemo(() => getAllTournamentRegions(), [tournamentPlayerData, region, offlineOnlineStatus])
 
-    return { characterToPlayersByPlacement, characterToPlayerCountPairs, playerListByEventAndPlacing, tourneyPlayerCountries }
+    return { characterToPlayersByPlacement, characterToPlayerCountPairs, playerListByEventAndPlacing, tourneyPlayerCountries, tourneyRegions }
 }

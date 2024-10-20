@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import { Player, TourneyPlayer } from "../../Data/Types"
 
 import "./PlayersTable.css"
+import { useEffect } from "react"
 
 type PlayersTableDataProps = {
     players: Player[] | TourneyPlayer[],
@@ -25,7 +26,7 @@ export default function PlayersTable({ players, selectedCharacter, playerDataTyp
         opacity: 0.95,
         marginBottom: 5,
         
-        scrollbarWidth: 'thin',
+        scrollbarWidth: 'auto',
         
 
         flexGrow: 1,
@@ -34,11 +35,11 @@ export default function PlayersTable({ players, selectedCharacter, playerDataTyp
 
     const tableHeadStyle = {
         color: 'white',
-        padding: 2,
+        padding: '2 2 2 2',
     }
 
-    const rankedTableHeadCategories = ["Name", "Character", "Country", "League", "MR"]
-    const tournamentTableHeadCategories = ["Name", "Character", "Residence", "Tournament", "Tournament Region"]
+    const rankedTableHeadCategories = ["Character", "Country", "League", "MR"]
+    const tournamentTableHeadCategories = ["Character", "Residence", "Tournament", "Tournament Region"]
 
     // TODO: might need to be state?
     const usingRankedData = playerDataType === "ranked"
@@ -49,6 +50,7 @@ export default function PlayersTable({ players, selectedCharacter, playerDataTyp
                 <TableHead>
                     <TableRow sx={{backgroundColor: '#1c1e22', }}>
                         <TableCell sx={{...tableHeadStyle, width: '50px'}} align="center">{usingRankedData? "Rank" : "Placing"}</TableCell>
+                        <TableCell sx={{...tableHeadStyle, paddingLeft: 8}} align="left">Name</TableCell>
                         {(usingRankedData? rankedTableHeadCategories : tournamentTableHeadCategories).map((category, idx) => {
                             if(category === "Character" && selectedCharacter)
                                 return ""
@@ -107,7 +109,7 @@ export default function PlayersTable({ players, selectedCharacter, playerDataTyp
                                             }
                                         </TableCell>
                                         :
-                                        <TableCell id="event" sx={{color: 'white',}} align="left">
+                                        <TableCell id="event" sx={{color: 'white',}} align="center">
                                             {eventName}
                                         </TableCell>
                                     }
