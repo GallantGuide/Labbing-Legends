@@ -2,12 +2,13 @@ import { legendIcon, masterIcon } from "../../Data/Icons"
 import { charnameToCardIcon } from "../../Data/Icons/Characters/Cards/CharacterCardIcons"
 import { charnameToIcon } from "../../Data/Icons/Characters/Unnamed/CharacterUnnamedIcons"
 import { countryToIcon } from "../../Data/Icons/Countries/CountryIcons"
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, SxProps } from "@mui/material"
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, SxProps, CircularProgress } from "@mui/material"
 
 import { Player, TourneyPlayer } from "../../Data/Types"
 
 import "./PlayersTable.css"
 import { useEffect } from "react"
+import React from "react"
 
 type PlayersTableDataProps = {
     players: Player[] | TourneyPlayer[],
@@ -15,7 +16,8 @@ type PlayersTableDataProps = {
     playerDataType: string
 }
 
-export default function PlayersTable({ players, selectedCharacter, playerDataType }: PlayersTableDataProps){
+// Always keep this memoized. players prop is too big
+export const PlayersTable = React.memo(({ players, selectedCharacter, playerDataType }: PlayersTableDataProps) => {
 
     const tableContainerStyle: SxProps = {
         border: '1px solid rgb(65, 63, 63);',
@@ -47,6 +49,9 @@ export default function PlayersTable({ players, selectedCharacter, playerDataTyp
     return(
         <TableContainer sx={tableContainerStyle} component={Paper}>
             <Table sx={{tableLayout: 'fixed', width: '100%'}}>
+                {/* {(players && players.length == 0)?
+                    <CircularProgress sx={{left: '50%', top: '50%', width: 50, height: 50}} />:""
+                } */}
                 <TableHead>
                     <TableRow sx={{backgroundColor: '#1c1e22', }}>
                         <TableCell sx={{...tableHeadStyle, width: '50px'}} align="center">{usingRankedData? "Rank" : "Placing"}</TableCell>
@@ -85,11 +90,16 @@ export default function PlayersTable({ players, selectedCharacter, playerDataTyp
                                         {usingRankedData? (player as Player).Rank : (player as TourneyPlayer).Placement}
                                     </TableCell>
         
-                                    <TableCell id={usingRankedData? 'cfn' : 'name'} sx={{color: 'white', paddingLeft: 8}} align="left">{usingRankedData? (player as Player).CFN : (player as TourneyPlayer).Name}</TableCell>
+                                    <TableCell id={usingRankedData? 'cfn' : 'name'} sx={{color: 'white', paddingLeft: 8}} align="left">
+                                        {usingRankedData? (player as Player).CFN : (player as TourneyPlayer).Name}
+                                    </TableCell>
         
                                     {!selectedCharacter &&
                                         <TableCell id="character" align="center">
-                                            <img className="character-icon" src={charnameToIcon[player.Character]} style={{textAlign: 'center'}} />
+                                            <img className="character-icon" loading="lazy" 
+                                                src={charnameToIcon[player.Character]} 
+                                                style={{textAlign: 'center'}} 
+                                            />
                                         </TableCell>
                                     }
         
@@ -103,9 +113,9 @@ export default function PlayersTable({ players, selectedCharacter, playerDataTyp
                                     {usingRankedData?
                                         <TableCell id="league" sx={{color: 'white',}} align="center">
                                             {(player as Player).League.includes("37")?
-                                                <img className="league-icon" src={legendIcon} />
+                                                <img className="league-icon" loading="lazy"  src={legendIcon} />
                                                 :
-                                                <img className="league-icon" src={masterIcon} />
+                                                <img className="league-icon" loading="lazy"  src={masterIcon} />
                                             }
                                         </TableCell>
                                         :
@@ -130,4 +140,4 @@ export default function PlayersTable({ players, selectedCharacter, playerDataTyp
             </Table>
         </TableContainer>
     )
-}
+})

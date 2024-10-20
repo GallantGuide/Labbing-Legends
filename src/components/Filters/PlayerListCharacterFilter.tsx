@@ -1,4 +1,4 @@
-import { CSSProperties } from "react"
+import { CSSProperties, useEffect } from "react"
 import { charnameToCardIcon } from "../../Data/Icons/Characters/Cards/CharacterCardIcons"
 
 type PlayerListCharacterFilterProps = {
@@ -14,6 +14,14 @@ export default function PlayerListCharacterFilter({
 }:
 PlayerListCharacterFilterProps
 ) {
+    // Preload images
+    useEffect(() =>{
+        Object.values(charnameToCardIcon).forEach((imageUrl) => {
+            const img = new Image()
+            img.src = imageUrl
+        })
+    }, [])
+
     const characterLabelStyle = (idx: number, isSelected: boolean): CSSProperties => ({
         // paddingLeft: idx != 1? 4 : 0,
         filter: (!isSelected && selectedCharacter)? 'grayscale(100%)' : 'grayscale(0%)'
@@ -31,6 +39,7 @@ PlayerListCharacterFilterProps
         boxSizing: 'border-box',
 
         padding: 3,
+        marginTop: 10
 
         // //FIXME: Bad solution for now
         // position: 'absolute',

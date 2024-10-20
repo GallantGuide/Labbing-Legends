@@ -20,7 +20,7 @@ function Home(){
     // const {sortCriteria, setSortCriteria,showMR, setShowMR,playerLimit, setPlayerLimit} = useContext(GlobalContext)
     //TODO: move states to parent so can be passed to player list
     const [sortCriteria, setSortCriteria] = useState<string>(location.state?.sortCriteria || "Representation")
-    const [showMR, setShowMR] = useState<boolean>(location.state?.showMR || false)
+    const [showMR, setShowMR] = useState<boolean>(location.state?.showMR || true)
     const [playerLimit, setPlayerLimit] = useState<number>(location.state?.playerLimit || 500)
 
     const { options } = useTopPlayersChartOptions({sortCriteria, showMR, playerLimit})

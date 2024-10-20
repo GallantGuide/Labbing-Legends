@@ -18,10 +18,10 @@
 .filter-bar{
     display: flex;
     align-items: center;
+    justify-content: center;
     
-    width: 100%;
     max-width: 1000px;
-    max-height: 50px;
+    max-height: 60px;
 
     margin-bottom: 10px;
     padding: 5px 6px 5px 8px;
@@ -30,7 +30,7 @@
 
     background-color: #1c1e22;
     border: 1px solid rgb(65, 63, 63);
-    border-radius: 9px;
+    border-radius: 5px;
 }
 
 .playerlist-page{

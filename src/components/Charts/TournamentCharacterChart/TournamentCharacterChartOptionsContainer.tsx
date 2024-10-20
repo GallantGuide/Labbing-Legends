@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { charnameToIcon } from "../../../Data/Icons/Characters/Named/CharacterNamedIcons";
 import { useTournamentCharacterChartData } from "./TournamentCharacterChartDataContainer";
 
@@ -9,6 +10,14 @@ type TournamentCharacterChartDataProps = {
 
 export function useTournamentCharacterChartOptionsContainer({ showPlacements, region, offlineOnlineStatus }: TournamentCharacterChartDataProps){
     const { xAxisCategories, barDataByPlayerCount, barDataByPlacementIntervals } = useTournamentCharacterChartData({ showPlacements, region, offlineOnlineStatus })
+
+    // Preload images
+    useEffect(() =>{
+        Object.values(charnameToIcon).forEach((imageUrl) => {
+            const img = new Image()
+            img.src = imageUrl
+        })
+    },[])
 
     const getSeriesList = (): Highcharts.Options["series"] => {
         if(showPlacements){

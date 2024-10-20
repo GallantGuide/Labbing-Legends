@@ -78,12 +78,12 @@ export const SwitchTextTrack = styled(Switch)({
         fontWeight: 500,
       },
       "&:before": {
-        content: '"R"',
+        content: '"T"',
         left: 4,
         opacity: 0,
       },
       "&:after": {
-        content: '"T"',
+        content: '"R"',
         right: 4,
       },
     },

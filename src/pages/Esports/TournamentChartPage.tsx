@@ -16,7 +16,7 @@ export default function TournamentChartPage(){
     const navigate = useNavigate()
     const location = useLocation()
 
-    const [showPlacements, setShowPlacements] = useState<boolean>(location.state?.showPlacements || false)
+    const [showPlacements, setShowPlacements] = useState<boolean>(location.state?.showPlacements || true)
     const [region, setRegion] = useState<string>(location.state?.region || "")
     const [offlineOnlineStatus, setOfflineOnlineStatus] = useState<string>(location.state?.offlineOnlineStatus || "")
 

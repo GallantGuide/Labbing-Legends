@@ -1,12 +1,13 @@
 import { CSSProperties } from "react"
-import { Paper, IconButton, InputBase, Divider,  } from "@mui/material"
+import { Paper, IconButton, InputBase, Divider, SxProps,  } from "@mui/material"
+import React from "react"
 
 type PlayerListPlayerFilterProps = {
     searchValue: string,
     handleSearchValueChange: (e: any) => void
 }
 
-export default function PlayerListPlayerFilter({ searchValue, handleSearchValueChange}: PlayerListPlayerFilterProps) {
+export const PlayerListPlayerFilter = React.memo(({ searchValue, handleSearchValueChange}: PlayerListPlayerFilterProps) => {
 
     // const playerFilterContainerStyle: CSSProperties = {
     //     marginRight: 2,
@@ -19,7 +20,20 @@ export default function PlayerListPlayerFilter({ searchValue, handleSearchValueC
     //     borderRadius: 3,
     // }
 
+    const containerStyle: SxProps = {
+        display: 'flex',
+        alignItems: 'center',
+        width: 400,
 
+        p: '1px 8px',
+        
+        boxSizing: 'border-box',
+        borderRadius: 1
+    }
+
+    const dividerStyle: SxProps = {
+        height: 28, m: 0.5, ml: 'auto'
+    }
 
     return(
         <>
@@ -30,13 +44,15 @@ export default function PlayerListPlayerFilter({ searchValue, handleSearchValueC
             </div> */}
             <Paper
                 component={"form"}
-                sx={{p: '2px 4px', display: 'flex', alignItems: 'center', width: 400}}
+                sx={containerStyle}
             >
                 <InputBase
                     placeholder="Search Player Name"
+                    value={searchValue}
+                    onChange={handleSearchValueChange}
                 />
-                <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+                <Divider sx={dividerStyle} orientation="vertical" />
             </Paper>
         </>
     )
-}
+})

@@ -47,7 +47,8 @@ function Navbar() {
                     navigate('/')
                 break
             case 'Tournament Chart':
-                navigate('/esports/')
+                if(!location.pathname.includes("/esports"))
+                    navigate('/esports/')
                 break
         }
     }
