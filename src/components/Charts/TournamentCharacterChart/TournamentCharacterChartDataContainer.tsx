@@ -4,12 +4,13 @@ import { allCharacters } from "../../../Data/StaticData"
 
 type TournamentCharacterChartDataProps = {
     showPlacements: boolean,
+    uniquePlayers: boolean,
     region: string,
     offlineOnlineStatus: string,
 }
 
-export function useTournamentCharacterChartData({ showPlacements, region, offlineOnlineStatus }: TournamentCharacterChartDataProps){
-    const { characterToPlayersByPlacement, characterToPlayerCountPairs } = useTournamentData({ region, offlineOnlineStatus })
+export function useTournamentCharacterChartData({ showPlacements, region, offlineOnlineStatus, uniquePlayers }: TournamentCharacterChartDataProps){
+    const { characterToPlayersByPlacement, characterToPlayerCountPairs } = useTournamentData({ region, offlineOnlineStatus, uniquePlayers })
 
     // useEffect(() => {
     //     getBarSeriesDataByPlacementIntervals()

@@ -6,13 +6,17 @@ import { allCharacters } from "../Data/StaticData"
 type TournamentDataContainerProps = {
     region?: string,
     offlineOnlineStatus?: string,
+    uniquePlayers: boolean
 }
 
-export function useTournamentData({ region, offlineOnlineStatus }: TournamentDataContainerProps){
+export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers }: TournamentDataContainerProps){
     const tournamentPlayerData: TourneyPlayer[] = esportsData
 
     function getFilteredData() : TourneyPlayer[] {
+        //filter by region
         let data: TourneyPlayer[] = region? tournamentPlayerData.filter((player) => player.Region === region) : tournamentPlayerData
+
+        //filter by offline/online
         data = offlineOnlineStatus? data.filter((player) => {
             const eventName = player.Event
             if(eventName.includes("Offline")){
@@ -20,6 +24,22 @@ export function useTournamentData({ region, offlineOnlineStatus }: TournamentDat
             }
             return (offlineOnlineStatus === "Online")
         }) : data
+
+        //filter by unique players
+        if(uniquePlayers){
+            const seen: Set<string> = new Set()
+
+            data = data.filter((player) =>{
+                const playerAndPlacing: string = player.Name + (player.Placement.toString())
+
+                if(!(seen.has(playerAndPlacing))){
+                    seen.add(playerAndPlacing)
+                    return true
+                }
+                return false
+            })
+
+        }
 
         return data
     }
@@ -109,14 +129,14 @@ export function useTournamentData({ region, offlineOnlineStatus }: TournamentDat
     }
     
     //Helper Data
-    const filteredData: TourneyPlayer[] = useMemo(() => getFilteredData(), [tournamentPlayerData, region, offlineOnlineStatus])
+    const filteredData: TourneyPlayer[] = useMemo(() => getFilteredData(), [tournamentPlayerData, region, offlineOnlineStatus, uniquePlayers])
 
     //Returned Data
-    const playerListByEventAndPlacing: TourneyPlayer[] = useMemo(() => getPlayerListByEventAndPlacing(), [tournamentPlayerData, region, offlineOnlineStatus])
-    const characterToPlayerCountPairs: [string, number][] = useMemo(() => getCharacterPlayerCountPairs(), [tournamentPlayerData, region, offlineOnlineStatus])
-    const characterToPlayersByPlacement: CharacterToTourneyPlayers = useMemo(() => getCharacterToPlayersByPlacement(), [tournamentPlayerData, region, offlineOnlineStatus])
-    const tourneyPlayerCountries: string[] = useMemo(() => getAllCountries(), [tournamentPlayerData, region, offlineOnlineStatus])
-    const tourneyRegions: string[] = useMemo(() => getAllTournamentRegions(), [tournamentPlayerData, region, offlineOnlineStatus])
+    const playerListByEventAndPlacing: TourneyPlayer[] = useMemo(() => getPlayerListByEventAndPlacing(), [filteredData])
+    const characterToPlayerCountPairs: [string, number][] = useMemo(() => getCharacterPlayerCountPairs(), [filteredData])
+    const characterToPlayersByPlacement: CharacterToTourneyPlayers = useMemo(() => getCharacterToPlayersByPlacement(), [filteredData])
+    const tourneyPlayerCountries: string[] = useMemo(() => getAllCountries(), [filteredData])
+    const tourneyRegions: string[] = useMemo(() => getAllTournamentRegions(), [filteredData])
 
     return { characterToPlayersByPlacement, characterToPlayerCountPairs, playerListByEventAndPlacing, tourneyPlayerCountries, tourneyRegions }
 }

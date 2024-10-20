@@ -4,12 +4,13 @@ import { useTournamentCharacterChartData } from "./TournamentCharacterChartDataC
 
 type TournamentCharacterChartDataProps = {
     showPlacements: boolean,
+    uniquePlayers: boolean,
     region: string ,
     offlineOnlineStatus: string,
 }
 
-export function useTournamentCharacterChartOptionsContainer({ showPlacements, region, offlineOnlineStatus }: TournamentCharacterChartDataProps){
-    const { xAxisCategories, barDataByPlayerCount, barDataByPlacementIntervals } = useTournamentCharacterChartData({ showPlacements, region, offlineOnlineStatus })
+export function useTournamentCharacterChartOptionsContainer({ showPlacements, region, offlineOnlineStatus, uniquePlayers }: TournamentCharacterChartDataProps){
+    const { xAxisCategories, barDataByPlayerCount, barDataByPlacementIntervals } = useTournamentCharacterChartData({ showPlacements, region, offlineOnlineStatus, uniquePlayers })
 
     // Preload images
     useEffect(() =>{

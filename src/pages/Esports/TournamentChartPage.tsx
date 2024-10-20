@@ -19,8 +19,9 @@ export default function TournamentChartPage(){
     const [showPlacements, setShowPlacements] = useState<boolean>(location.state?.showPlacements || true)
     const [region, setRegion] = useState<string>(location.state?.region || "")
     const [offlineOnlineStatus, setOfflineOnlineStatus] = useState<string>(location.state?.offlineOnlineStatus || "")
+    const [uniquePlayers, setUniquePlayers] = useState<boolean>(false)
 
-    const { options } = useTournamentCharacterChartOptionsContainer({ showPlacements, region, offlineOnlineStatus })
+    const { options } = useTournamentCharacterChartOptionsContainer({ showPlacements, region, offlineOnlineStatus, uniquePlayers })
 
     useEffect(() => {
         navigate("/esports/", { replace: true, state: {region, offlineOnlineStatus, showPlacements}})
@@ -58,6 +59,11 @@ export default function TournamentChartPage(){
         isChecked? setShowPlacements(true) : setShowPlacements(false)
     }
 
+    const handleUniquePlayerSwitch = (e: any) => {
+        const isChecked = e.target.checked
+        isChecked? setUniquePlayers(true) : setUniquePlayers(false)
+    }
+
     const handleRegionFilter = (e: any) => {
         const newRegion = e.target.value
 
@@ -81,6 +87,9 @@ export default function TournamentChartPage(){
                     <FormControlLabel label="Show Placements" sx={{color: 'white', display: 'flex'}}
                         control={<Switch checked={showPlacements} aria-label="Show Placements" onChange={handlePlacementsSwitch}/>}
                     />
+                    <FormControlLabel label="Unique by player" sx={{color: 'white', display: 'flex'}}
+                        control={<Switch checked={uniquePlayers} aria-label="Unique by player" onChange={handleUniquePlayerSwitch}/>}
+                    />
                     <FormControl>
                         <FormLabel sx={formGroupLabelStyle} id="radio-sorting">Region Filter</FormLabel>
                         <RadioGroup
@@ -91,7 +100,7 @@ export default function TournamentChartPage(){
                         >
                             {tournamentRegions && tournamentRegions.map((region) => {
                                 return(
-                                    <FormControlLabel value={region} control={<Radio/>} label={<Typography sx={radioLabelStyle}>{region}</Typography>}/>
+                                    <FormControlLabel key={region} value={region} control={<Radio/>} label={<Typography sx={radioLabelStyle}>{region}</Typography>}/>
                                 )
                             })}
                         </RadioGroup>
