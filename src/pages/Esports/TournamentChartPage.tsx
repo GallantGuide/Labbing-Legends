@@ -24,7 +24,11 @@ export default function TournamentChartPage(){
     const { options } = useTournamentCharacterChartOptionsContainer({ showPlacements, region, offlineOnlineStatus, uniquePlayers })
 
     useEffect(() => {
-        navigate("/esports/", { replace: true, state: {region, offlineOnlineStatus, showPlacements}})
+        const timeoutId = setTimeout(() => {
+            navigate("/esports/", { replace: true, state: {region, offlineOnlineStatus, showPlacements}})
+        }, 300)
+
+        return () => clearTimeout(timeoutId)
     },[region, offlineOnlineStatus, showPlacements])
 
     useEffect(() => {

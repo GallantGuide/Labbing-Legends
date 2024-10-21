@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useCallback, useMemo, useRef } from "react";
 import { charnameToIcon } from "../../../Data/Icons/Characters/Named/CharacterNamedIcons";
 import { useTournamentCharacterChartData } from "./TournamentCharacterChartDataContainer";
 
@@ -10,7 +10,7 @@ type TournamentCharacterChartDataProps = {
 }
 
 export function useTournamentCharacterChartOptionsContainer({ showPlacements, region, offlineOnlineStatus, uniquePlayers }: TournamentCharacterChartDataProps){
-    const { xAxisCategories, barDataByPlayerCount, barDataByPlacementIntervals } = useTournamentCharacterChartData({ showPlacements, region, offlineOnlineStatus, uniquePlayers })
+    const { charnameCategories, seriesByPlayerCount, barDataByPlacementIntervals } = useTournamentCharacterChartData({ showPlacements, region, offlineOnlineStatus, uniquePlayers })
 
     // Preload images
     useEffect(() =>{
@@ -20,9 +20,9 @@ export function useTournamentCharacterChartOptionsContainer({ showPlacements, re
         })
     },[])
 
-    const getSeriesList = (): Highcharts.Options["series"] => {
+    const getSeriesList = useCallback((): Highcharts.Options["series"] => {
         if(showPlacements){
-            const charNames = xAxisCategories
+            const charNames = charnameCategories
 
             const barColorsV2 = ["#00798c","#edae49","#d1495b","#3BAD4EFF"] ////bot mid top
 
@@ -36,7 +36,11 @@ export function useTournamentCharacterChartOptionsContainer({ showPlacements, re
                     type: 'column',
                     stack: 'Placements',
                     color: barColorsV2[i],
-                    data: charNames.map(charName => barDataByPlacementIntervals[charName][i])
+                    data: charNames.map(charName => barDataByPlacementIntervals[charName][i]),
+                    animation: {
+                        // duration: 400, // Reduce animation duration
+                        // easing: 'easeOutCubic'
+                    }
                 }
                 res.push(tmp)
             }
@@ -49,19 +53,23 @@ export function useTournamentCharacterChartOptionsContainer({ showPlacements, re
                 {
                     name: 'Player Count',
                     type: 'column',
-                    data: barDataByPlayerCount,
-                    color: '#206DE9FF'
+                    data: seriesByPlayerCount,
+                    color: '#206DE9FF',
+                    animation: {
+                        // duration: 400, // Reduce animation duration
+                        // easing: 'easeOutCubic'
+                    }
                 },
             ]
         }
-    }
+    }, [showPlacements, charnameCategories, seriesByPlayerCount, barDataByPlacementIntervals])
 
     // Constants for icon size and padding
     const iconWidth = 60  // TODO: change icon size
     const iconPadding = 3
-    const chartWidth = (iconWidth + iconPadding) * xAxisCategories.length
+    const chartWidth = (iconWidth + iconPadding) * charnameCategories.length
     
-    const options: Highcharts.Options = {
+    const options: Highcharts.Options = useMemo(() => ({
         credits: {
             enabled: false,
         },
@@ -74,6 +82,10 @@ export function useTournamentCharacterChartOptionsContainer({ showPlacements, re
             borderRadius: 20,
             style:{
                 color: 'white',
+            },
+            animation: {
+                // duration: 400, // Reduce animation duration
+                // easing: 'easeOutCubic'
             }
         },
         title: {
@@ -93,6 +105,10 @@ export function useTournamentCharacterChartOptionsContainer({ showPlacements, re
                 //     enabled: true,
                 //     format: '{point.percentage:.0f}%'
                 // }
+                animation: {
+                    // duration: 400, // Reduce animation duration
+                    // easing: 'easeOutCubic'
+                }
             },
             series: {
                 opacity: 0.97,
@@ -142,7 +158,7 @@ export function useTournamentCharacterChartOptionsContainer({ showPlacements, re
             }
         },
         xAxis: {
-            categories: xAxisCategories,
+            categories: charnameCategories,
             title:{
                 margin: 10,
                 text: 'Character',
@@ -169,7 +185,7 @@ export function useTournamentCharacterChartOptionsContainer({ showPlacements, re
             }
         },
         series: getSeriesList()
-    }
+    }), [charnameCategories, getSeriesList])
 
     return { options }
 }

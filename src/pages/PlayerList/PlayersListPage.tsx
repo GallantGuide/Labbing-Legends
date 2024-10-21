@@ -50,7 +50,7 @@ function PlayersListPage() {
     const [tournamentType, setTournamentType] = useState<string>("All")
     // Data from custom hooks
     const { characterToPlayersByMR, playersListByMR, playerCountries } = useRankData({ playerLimit })
-    const { characterToPlayersByPlacement, playerListByEventAndPlacing, tourneyPlayerCountries } = useTournamentData({})
+    const { charnameToPlayersByPlacement, playersByEventAndPlacing, tourneyPlayerCountries } = useTournamentData({})
     
 
     useEffect(() => {
@@ -65,7 +65,7 @@ function PlayersListPage() {
             /* Ranked specific filters */
         }
         else{ // "tournament"
-            tmp = selectedCharacter? characterToPlayersByPlacement[selectedCharacter] : playerListByEventAndPlacing
+            tmp = selectedCharacter? charnameToPlayersByPlacement[selectedCharacter] : playersByEventAndPlacing
             if(selectedCountry && selectedCountry != "World") //FIXME: 
                 tmp = tmp.filter((player) => player.Residence === selectedCountry)
             if(debouncedSearchValue != "")

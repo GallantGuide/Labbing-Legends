@@ -9,33 +9,27 @@ type TournamentCharacterChartDataProps = {
     offlineOnlineStatus: string,
 }
 
-export function useTournamentCharacterChartData({ showPlacements, region, offlineOnlineStatus, uniquePlayers }: TournamentCharacterChartDataProps){
-    const { characterToPlayersByPlacement, characterToPlayerCountPairs } = useTournamentData({ region, offlineOnlineStatus, uniquePlayers })
+export function useTournamentCharacterChartData({ region, offlineOnlineStatus, uniquePlayers }: TournamentCharacterChartDataProps){
+    const { charnameToPlayersByPlacement, charnamePlayerCountPairs } = useTournamentData({ region, offlineOnlineStatus, uniquePlayers })
 
-    // useEffect(() => {
-    //     getBarSeriesDataByPlacementIntervals()
-    // },[])
+    const charnameCategories = useMemo(() => {
+        return charnamePlayerCountPairs? charnamePlayerCountPairs.map(([charName,]) => charName) : allCharacters
+    }, [charnameToPlayersByPlacement])
 
-    function getCategories(): string[]{
-        // return characterToPlayersByPlacement? Object.keys(characterToPlayersByPlacement) : allCharacters
-        return characterToPlayerCountPairs? characterToPlayerCountPairs.map(([charName,]) => charName) : allCharacters
-    }
-
-    function getBarSeriesByPlayerCount(): number[]{
-        // return characterToPlayersByPlacement? Object.entries(characterToPlayersByPlacement).map(([, player]) => player.length) : []
-        return characterToPlayerCountPairs? characterToPlayerCountPairs.map(([,count]) => count) : []
-    }
+    const seriesByPlayerCount = useMemo(() => {
+        return charnamePlayerCountPairs? charnamePlayerCountPairs.map(([,count]) => count) : []
+    },[charnameToPlayersByPlacement])
 
     function getBarSeriesDataByPlacementIntervals(): { [key: string]: number[] } {
-        if(characterToPlayersByPlacement){
+        if(charnameToPlayersByPlacement){
             const placementIntervals: { [key: string]: number[] } = {}
-            const xAxisCharacters = xAxisCategories
+            const xAxisCharacters = charnameCategories
 
             xAxisCharacters.forEach((charName) => {
                 const intervals = [0,0,0,0] //assume 3 intervals: top 3, top 8, top 16
 
-                if(characterToPlayersByPlacement[charName]){
-                    characterToPlayersByPlacement[charName].forEach((player) => {
+                if(charnameToPlayersByPlacement[charName]){
+                    charnameToPlayersByPlacement[charName].forEach((player) => {
                         const placement: number = player.Placement
 
                         if(placement >= 9){ //top 16
@@ -54,15 +48,12 @@ export function useTournamentCharacterChartData({ showPlacements, region, offlin
                 }
                 placementIntervals[charName] = intervals
             })
-            // console.log(placementIntervals)
             return placementIntervals
         }
         return {}
     }
 
-    const xAxisCategories = useMemo(() => getCategories(), [showPlacements, characterToPlayersByPlacement])
-    const barDataByPlayerCount = useMemo(() => getBarSeriesByPlayerCount(), [showPlacements, characterToPlayersByPlacement])
-    const barDataByPlacementIntervals = useMemo(() => getBarSeriesDataByPlacementIntervals(), [showPlacements, characterToPlayersByPlacement])
+    const barDataByPlacementIntervals = useMemo(() => getBarSeriesDataByPlacementIntervals(), [charnameToPlayersByPlacement])
 
-    return { xAxisCategories, barDataByPlayerCount, barDataByPlacementIntervals }
+    return { charnameCategories, seriesByPlayerCount, barDataByPlacementIntervals }
 }

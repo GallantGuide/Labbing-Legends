@@ -6,137 +6,95 @@ import { allCharacters } from "../Data/StaticData"
 type TournamentDataContainerProps = {
     region?: string,
     offlineOnlineStatus?: string,
-    uniquePlayers: boolean
+    uniquePlayers?: boolean
 }
 
-export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers }: TournamentDataContainerProps){
-    const tournamentPlayerData: TourneyPlayer[] = esportsData
+type CharacterStats = {
+    totalCount: number, //number of people playing this character
+                  // [top16,  top8,   top3,   top1]
+    placementCounts: [number, number, number, number], // number people placing top 16/8/3/1 with this character
+    players: TourneyPlayer[], // list of people playing the character
+};
 
-    function getFilteredData() : TourneyPlayer[] {
-        //filter by region
-        let data: TourneyPlayer[] = region? tournamentPlayerData.filter((player) => player.Region === region) : tournamentPlayerData
-
-        //filter by offline/online
-        data = offlineOnlineStatus? data.filter((player) => {
-            const eventName = player.Event
-            if(eventName.includes("Offline")){
-                return (offlineOnlineStatus === "Offline")
-            }
-            return (offlineOnlineStatus === "Online")
-        }) : data
-
-        //filter by unique players
-        if(uniquePlayers){
-            const seen: Set<string> = new Set()
-
-            data = data.filter((player) =>{
-                const playerAndPlacing: string = player.Name + (player.Placement.toString())
-
-                if(!(seen.has(playerAndPlacing))){
-                    seen.add(playerAndPlacing)
-                    return true
+export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers }: TournamentDataContainerProps) {
+    // Create a memoized filtered dataset
+    const filteredData = useMemo(() => {
+        let data = esportsData
+        
+        // Apply all filters in a single pass
+        if (region || offlineOnlineStatus || uniquePlayers) {
+            const seen = uniquePlayers ? new Set<string>() : null
+            
+            data = data.filter(player => {
+                // Check all conditions in one pass
+                const regionMatch = !region || player.Region === region // no region specified then default to true
+                const eventMatch = !offlineOnlineStatus ||
+                    (player.Event.includes("Offline") === (offlineOnlineStatus === "Offline"))
+                
+                // Unique players check
+                if (uniquePlayers) {
+                    const key = `${player.Name}-${player.Placement}`
+                    if (seen!.has(key)) return false;
+                    seen!.add(key);
                 }
-                return false
-            })
-
+                
+                return regionMatch && eventMatch
+            });
         }
+        
+        return data;
+    }, [esportsData, region, offlineOnlineStatus, uniquePlayers])
 
-        return data
-    }
-
-    function getCharacterPlayerCountPairs(): [string, number][]{
-        const data: TourneyPlayer[] = filteredData
-        const tmp: StringToNumber = {}
-
-        data.forEach((player) => {
-            const charName = player.Character
-            if(charName in tmp)
-                tmp[charName]++
-            else
-                tmp[charName] = 1
+    const charnameToStats = useMemo(() => {
+        const stats = new Map<string, CharacterStats>()
+        
+        // Initialize stats for all characters
+        allCharacters.forEach(char => {
+            stats.set(char, {
+                totalCount: 0,
+                placementCounts: [0, 0, 0, 0],
+                players: []
+            })
         })
 
-        allCharacters.forEach((charName) =>{
-            if(!(charName in tmp)){
-                tmp[charName] = 0
-            }
+        // Single pass through filtered data
+        filteredData.forEach(player => {
+            const stat = stats.get(player.Character)!
+            stat.totalCount++
+            stat.players.push(player)
+            
+            // Update placement counts
+            if (player.Placement === 1) stat.placementCounts[3]++
+            else if (player.Placement <= 3) stat.placementCounts[2]++
+            else if (player.Placement <= 8) stat.placementCounts[1]++
+            else if (player.Placement <= 16) stat.placementCounts[0]++
         })
 
-        return Object.entries(tmp).sort(([,freqA],[,freqB]) => freqB-freqA)
-    }
+        return stats
+    }, [filteredData])
 
-    function getCharacterToPlayersByPlacement(): CharacterToTourneyPlayers {
-        const data: TourneyPlayer[] = filteredData
-        const tmp: CharacterToTourneyPlayers = {}
+    // Derived data using the pre-computed stats
+    const charnamePlayerCountPairs = useMemo(() => 
+        Array.from(charnameToStats.entries())
+            .map(([char, stats]) => [char, stats.totalCount] as [string, number])
+            .sort(([,a], [,b]) => b - a),
+        [charnameToStats]
+    );
 
-        data.forEach((player) => {
-            const charName = player.Character
-
-            if(charName in tmp)
-                tmp[charName].push(player)
-            else
-                tmp[charName] = [player]
+    const charnameToPlayersByPlacement = useMemo(() => {
+        const result: CharacterToTourneyPlayers = {}
+        charnameToStats.forEach((stats, char) => {
+            result[char] = [...stats.players].sort((a, b) => a.Placement - b.Placement)
         })
+        return result
+    }, [charnameToStats])
 
-        allCharacters.forEach((charName) =>{
-            if(!(charName in tmp)){
-                tmp[charName] = []
-            }
-        })
-
-        Object.values(tmp).forEach((players) => {
-            players.sort((a, b) => a.Placement - b.Placement)
-        })
-
-        return tmp
-    }
-
-    function getPlayerListByEventAndPlacing(): TourneyPlayer[] {
-        const data: TourneyPlayer[] = filteredData
-        return data
-    }
-
-    function getAllCountries(): string[] {
-        const data: TourneyPlayer[] = filteredData
-        const seen: Set<string> = new Set()
-        const tmp: string[] = []
-
-        data.forEach((player) =>{
-            const country = player.Residence
-            if(!(seen.has(country))){
-                seen.add(country)
-                tmp.push(country)
-            }
-        })
-
-        return tmp.sort()
-    }
-
-    function getAllTournamentRegions(): string[] {
-        const data: TourneyPlayer[] = filteredData
-        const seen: Set<string> = new Set()
-        const tmp: string[] = []
-
-        data.forEach((player) =>{
-            const region = player.Region
-            if(!(seen.has(region))){
-                seen.add(region)
-                tmp.push(region)
-            }
-        })
-
-        return tmp
-    }
-    
-    //Helper Data
-    const filteredData: TourneyPlayer[] = useMemo(() => getFilteredData(), [tournamentPlayerData, region, offlineOnlineStatus, uniquePlayers])
-
-    //Returned Data
-    const playerListByEventAndPlacing: TourneyPlayer[] = useMemo(() => getPlayerListByEventAndPlacing(), [filteredData])
-    const characterToPlayerCountPairs: [string, number][] = useMemo(() => getCharacterPlayerCountPairs(), [filteredData])
-    const characterToPlayersByPlacement: CharacterToTourneyPlayers = useMemo(() => getCharacterToPlayersByPlacement(), [filteredData])
-    const tourneyPlayerCountries: string[] = useMemo(() => getAllCountries(), [filteredData])
-    const tourneyRegions: string[] = useMemo(() => getAllTournamentRegions(), [filteredData])
-
-    return { characterToPlayersByPlacement, characterToPlayerCountPairs, playerListByEventAndPlacing, tourneyPlayerCountries, tourneyRegions }
+    return {
+        charnameToStats,
+        charnameToPlayersByPlacement,
+        charnamePlayerCountPairs,
+        playersByEventAndPlacing: filteredData,
+        tourneyPlayerCountries: useMemo(() => Array.from(new Set(filteredData.map(p => p.Residence))).sort(),[filteredData]),
+        tourneyRegions: useMemo(() => Array.from(new Set(filteredData.map(p => p.Region))),[filteredData])
+    };
 }
