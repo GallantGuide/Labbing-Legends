@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react"
-import { useRankData } from "../../RankDataContainer"
+import { useRankData } from "../../RankedDataContainer"
 import { CharacterToPlayerCountByMRintervals, ChartsDataProps } from "../../../Data/Types"
 
 import { allCharacters } from "../../../Data/StaticData"

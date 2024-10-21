@@ -1,16 +1,11 @@
-import { useEffect, useState } from "react"
-
-import Highcharts from "highcharts"
-import HighchartsReact from "highcharts-react-official"
-
-import { useTournamentCharacterChartOptionsContainer } from "../../components/Charts/TournamentCharacterChart/TournamentCharacterChartOptionsContainer"
-
+import { useEffect, useRef, useState } from "react"
 import { FormControlLabel, Switch, FormControl, FormLabel, RadioGroup, Radio, Typography } from "@mui/material"
 
 import { tournamentRegions } from "../../Data/StaticData"
 
-import "../Home/Home.css"
+import "../Home/RankedChartPage.css"
 import { useLocation, useNavigate } from "react-router-dom"
+import { TournamentChart } from "../../components/Charts/TournamentCharacterChart/TournamentChart"
 
 export default function TournamentChartPage(){
     const navigate = useNavigate()
@@ -21,42 +16,16 @@ export default function TournamentChartPage(){
     const [offlineOnlineStatus, setOfflineOnlineStatus] = useState<string>(location.state?.offlineOnlineStatus || "")
     const [uniquePlayers, setUniquePlayers] = useState<boolean>(false)
 
-    const { options } = useTournamentCharacterChartOptionsContainer({ showPlacements, region, offlineOnlineStatus, uniquePlayers })
 
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            navigate("/esports/", { replace: true, state: {region, offlineOnlineStatus, showPlacements}})
-        }, 300)
+    // useEffect(() => {
+    //     const timeoutId = setTimeout(() => {
+    //         navigate("/esports/", { replace: true, state: {region, offlineOnlineStatus, showPlacements}})
+    //     }, 300)
 
-        return () => clearTimeout(timeoutId)
-    },[region, offlineOnlineStatus, showPlacements])
+    //     return () => clearTimeout(timeoutId)
+    // },[region, offlineOnlineStatus, showPlacements])
 
-    useEffect(() => {
-        const chartContainer = document.querySelector('.highcharts-container')
-        if(chartContainer){
-            chartContainer.addEventListener('click', handleChartClick)
-        }
 
-        return () => {
-            if(chartContainer){
-                chartContainer.removeEventListener('click', handleChartClick)
-            }
-        }
-    }, [])
-
-    const handleChartClick = (e: any) => {
-        const playerDataType = "tournament"
-        
-        if("attributes" in e.target){
-            const attrbs = e.target["attributes"]
-            if(attrbs["class"] && attrbs["id"] && attrbs["class"].value == "character-icon"){
-                const charName = attrbs["id"].value
-                
-                // pass state values with navigation to players list page
-                navigate(`/players/${charName}`, {state: {playerDataType}})
-            }
-        }
-    }
 
     const handlePlacementsSwitch = (e: any) => {
         const isChecked = e.target.checked
@@ -85,7 +54,12 @@ export default function TournamentChartPage(){
 
     return(
         <div className="Chart">
-            <HighchartsReact highcharts={Highcharts} options={options}/>
+            <TournamentChart
+                showPlacements = {showPlacements}
+                uniquePlayers = {uniquePlayers}
+                region = {region}
+                offlineOnlineStatus = {offlineOnlineStatus}
+            />
             <div className="SideBar">
                 <div className="SortButtons">
                     <FormControlLabel label="Show Placements" sx={{color: 'white', display: 'flex'}}

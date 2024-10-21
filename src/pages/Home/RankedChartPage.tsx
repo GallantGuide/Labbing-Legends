@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useTopPlayersChartOptions } from "../../components/Charts/RankedCharacterChart/TopPlayersChartOptionsContainer";
+import { useTopPlayersChartOptions } from "../../components/Charts/RankedCharacterChart/RankedChartOptionsContainer";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
@@ -10,10 +10,9 @@ import CountryPlayerCountPanel from "../../components/Panels/CountryPlayerCountP
 
 import { GlobalContext } from "../GlobalProvider";
 
-import "./Home.css"
-import { useTournamentCharacterChartData } from "../../components/Charts/TournamentCharacterChart/TournamentCharacterChartDataContainer";
+import "./RankedChartPage.css"
 
-function Home(){
+export default function RankedChartPage(){
     const navigate = useNavigate()
     const location = useLocation()
 
@@ -24,8 +23,6 @@ function Home(){
     const [playerLimit, setPlayerLimit] = useState<number>(location.state?.playerLimit || 500)
 
     const { options } = useTopPlayersChartOptions({sortCriteria, showMR, playerLimit})
-
-    // const { xAxisCategories, barDataByPlayerCount, barDataByPlacementIntervals } = useTournamentCharacterChartData({  })
 
     // Update location state
     useEffect(() => {
@@ -122,5 +119,3 @@ function Home(){
         </div>
     )
 }
-
-export default Home

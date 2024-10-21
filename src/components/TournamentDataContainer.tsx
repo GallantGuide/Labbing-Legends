@@ -33,7 +33,8 @@ export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers }
                 
                 // Unique players check
                 if (uniquePlayers) {
-                    const key = `${player.Name}-${player.Placement}`
+                    // **IMPORTANT**: Distinguish by name, placement, and character
+                    const key = `${player.Name}-${player.Placement}-${player.Character}`
                     if (seen!.has(key)) return false;
                     seen!.add(key);
                 }

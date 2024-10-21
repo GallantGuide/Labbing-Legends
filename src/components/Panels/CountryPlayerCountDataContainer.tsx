@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useRankData } from "../RankDataContainer";
+import { useRankData } from "../RankedDataContainer";
 import { CountryPlayerCountPairs, StringToNumber, CountryPlayerCountDataProps } from "../../Data/Types";
 
 import "./CountryPlayerCountPanel.css"

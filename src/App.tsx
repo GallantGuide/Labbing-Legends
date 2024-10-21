@@ -4,7 +4,7 @@ import './App.css'
 import { useRoutes } from 'react-router-dom'
 import Header from './components/Bars/Navbar'
 import PlayersListPage from './pages/PlayerList/PlayersListPage'
-import Home from './pages/Home/Home'
+import RankedChartPage from './pages/Home/RankedChartPage'
 import { createTheme, ThemeProvider } from '@mui/material'
 
 import { GlobalProvider } from './pages/GlobalProvider'
@@ -43,7 +43,7 @@ function App() {
     // },
     {// FIXME: should have global constants for these
       path: "/",
-      element: <Home/>
+      element: <RankedChartPage/>
     },
     {
       path: "/players/:character?",

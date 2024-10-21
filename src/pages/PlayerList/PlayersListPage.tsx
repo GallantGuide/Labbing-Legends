@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, CSSProperties } from "react";
-import { useRankData } from "../../components/RankDataContainer"
+import { useRankData } from "../../components/RankedDataContainer"
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 
 import { Player, TourneyPlayer } from "../../Data/Types";
@@ -161,7 +161,7 @@ function PlayersListPage() {
     }
 
     const handleCountryChange = (e: any) => {
-        console.log(e.target.value)
+        // console.log(e.target.value)
         const country = e.target.value
 
         setSelectedCountry(country)
@@ -213,10 +213,6 @@ function PlayersListPage() {
         display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
         position: 'absolute', left: 'calc(50% + 500px)', maxWidth: 300, marginLeft: 10, marginTop: 70
     }
-
-    useEffect(() => {
-        console.log(players.length > 0)
-    }, [players])
 
     return(
         <div className="playerlist-page">
