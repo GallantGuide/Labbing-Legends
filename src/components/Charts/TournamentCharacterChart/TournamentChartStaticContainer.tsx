@@ -31,10 +31,10 @@ export default function useTournamentChartStaticOptions(){
             pointWidth: 45, // TODO: change width of bars
             borderWidth: 0,
             borderRadius: 0,
-            // dataLabels: {
-            //     enabled: true,
-            //     format: '{point.percentage:.0f}%'
-            // }
+            dataLabels: {
+                enabled: true,
+                format: '{y}'
+            }
             // animation: {
             //     duration: 400, // Reduce animation duration
             //     easing: 'easeOutCubic'

@@ -63,9 +63,7 @@ export function useTournamentChartUpdater({ chartRef, showPlacements, region, of
             }
             
             chart.update({
-                chart: {
-                    width: chartWidth
-                },
+                chart: { width: chartWidth},
                 xAxis: {
                     categories: charnameCategories,
                     labels: {
