@@ -79,7 +79,7 @@ export const PlayersTable = React.memo(({ players, selectedCharacter, playerData
                             else if(eventName.includes("WW")){
                                 eventName = "WW " + eventName.substring(23)
                             }
-                            eventName = eventName.replace(/"/g, '')
+                            eventName = eventName.replace(/"/g, ' ')
                         }
                         return(
                             (
