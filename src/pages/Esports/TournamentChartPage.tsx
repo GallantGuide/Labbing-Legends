@@ -69,10 +69,10 @@ export default function TournamentChartPage(){
                         control={<Switch checked={uniquePlayers} aria-label="Unique by player" onChange={handleUniquePlayerSwitch}/>}
                     />
                     <CustomSelect
-                        label={"Tournament Region"}
-                        selectedValue={region} options={["World",...tournamentRegions]}
-                        handleChange={handleRegionChange}
-                        defaultValue="World"
+                        label={"Offline/Online"}
+                        selectedValue={offlineOnlineStatus} options={["Both", "Offline", "Online"]}
+                        handleChange={handleOfflineOnlineChange}
+                        defaultValue="Both"
                         sx={{marginTop: 2, width: 200}}
                     />
                     <CustomSelect
@@ -83,10 +83,10 @@ export default function TournamentChartPage(){
                         sx={{marginTop: 2, width: 200}}
                     />
                     <CustomSelect
-                        label={"Offline/Online"}
-                        selectedValue={offlineOnlineStatus} options={["Both", "Offline", "Online"]}
-                        handleChange={handleOfflineOnlineChange}
-                        defaultValue="Both"
+                        label={"Tournament Region"}
+                        selectedValue={region} options={["World",...tournamentRegions]}
+                        handleChange={handleRegionChange}
+                        defaultValue="World"
                         sx={{marginTop: 2, width: 200}}
                     />
                     

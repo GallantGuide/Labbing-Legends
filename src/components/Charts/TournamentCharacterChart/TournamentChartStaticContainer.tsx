@@ -5,7 +5,8 @@ export default function useTournamentChartStaticOptions(){
     const chartOptions: Highcharts.Options["chart"] = {
         type: "column",
         height: 750,
-        backgroundColor: '#252527',
+        // backgroundColor: '#252527',
+        backgroundColor: 'rgb(28,30,34)',
         // backgroundColor: 'transparent',
         borderRadius: 20,
         style:{

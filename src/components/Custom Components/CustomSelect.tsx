@@ -72,6 +72,7 @@ export default function StyledSelect({ label, selectedValue, options, handleChan
         overflowY: 'auto',
         marginTop: 8,
         backgroundColor: unfocusedBackgroundColor,
+        border: `solid 1px ${focusedBorderColor}`,
       }
     }
   };
