@@ -10,12 +10,12 @@ import PlayerListCharacterFilter from "../../components/Filters/PlayerListCharac
 import {PlayersTable} from "../../components/Lists/PlayersTable";
 
 import { Stack } from "@mui/material";
-import { AntSwitch, SwitchTextTrack } from "../../Data/Custom Components/CustomStyledComponents";
+import { AntSwitch, SwitchTextTrack } from "../../components/Custom Components/CustomStyledComponents";
 
 import { useTournamentData } from "../../components/TournamentDataContainer";
 import { tournamentRegions } from "../../Data/StaticData";
-import { PlayerListCountryFilterSide } from "../../components/Filters/PlayerListCountryFilterSide";
-import CustomSelect from "../../Data/Custom Components/CustomSelect";
+import { PlayerListCountryFilterSide } from "../../OLD/PlayerListCountryFilterSide";
+import CustomSelect from "../../components/Custom Components/CustomSelect";
 import { charnameToBackgrounds } from "../../Data/Backgrounds/CharacterBackgrounds";
 
 function PlayersListPage() {
@@ -46,8 +46,10 @@ function PlayersListPage() {
     const [phase, setPhase] = useState<number>(5)
     const [phaseDate, setPhaseDate] = useState<Date | null>(null)
     // Tournament Filters
-    const [region, setRegion] = useState<string>("World")
-    const [tournamentType, setTournamentType] = useState<string>("All")
+    const [region, setRegion] = useState<string>(location.state?.region || "World")
+    const [tournamentType, setTournamentType] = useState<string>(location.state?.tournamentType || "All")
+    const [offlineOnlineStatus, setOfflineOnlineStatus] = useState<string>(location.state?.offlineOnlineStatus || "Both")
+
     // Data from custom hooks
     const { characterToPlayersByMR, playersListByMR, playerCountries } = useRankData({ playerLimit })
     const { charnameToPlayersByPlacement, playersByEventAndPlacing, tourneyPlayerCountries } = useTournamentData({})
@@ -75,6 +77,8 @@ function PlayersListPage() {
                 tmp = tmp.filter((player) => player.Region == region)
             if(tournamentType != "" && tournamentType != "All")
                 tmp = tmp.filter((player) => player.TournamentType == tournamentType)
+            if(offlineOnlineStatus != "" && offlineOnlineStatus != "Both")
+                tmp = tmp.filter((player) => player.Event.includes(offlineOnlineStatus))
         }
         setPlayers(tmp)
 
@@ -82,7 +86,7 @@ function PlayersListPage() {
         navigate(`/players/${selectedCharacter || ""}`, { replace: true})
         
     }, [//ranked state triggers
-        region, tournamentType, //tournament state triggers
+        region, tournamentType, offlineOnlineStatus, //tournament state triggers
         selectedCharacter, debouncedSearchValue, selectedCountry, //shared filter triggers
         playerDataType])
 
@@ -192,9 +196,14 @@ function PlayersListPage() {
         setPlayers([])
         setLoading(true)
         if(isChecked)
-            setPlayerDataType("ranked")
+            setPlayerDataType("tournament")
         else
-            setPlayerDataType("tournament") 
+            setPlayerDataType("ranked")
+    }
+
+    const handleOfflineOnlineChange = (e: any) => {
+        const val = e.target.value
+        setOfflineOnlineStatus(val)
     }
 
     const selectFilterContainerStyle: CSSProperties = {
@@ -211,7 +220,7 @@ function PlayersListPage() {
 
     const sideBarFilterContainerStyle: CSSProperties = {
         display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-        position: 'absolute', left: 'calc(50% + 500px)', maxWidth: 300, marginLeft: 10, marginTop: 70
+        position: 'absolute', left: 'calc(50% + 500px)', maxWidth: 300, marginLeft: 10, marginTop: 53
     }
 
     return(
@@ -220,7 +229,7 @@ function PlayersListPage() {
                 <div className="filter-bar" >
                     <PlayerListPlayerFilter handleSearchValueChange={handleSearchValueChange} searchValue={searchValue}/>
                     <Stack direction="row" spacing={1} sx={{}}>
-                        <SwitchTextTrack checked={playerDataType === "ranked"} onChange={handleDataTypeSwitch} inputProps={{ 'aria-label': 'ant design' }} />
+                        <SwitchTextTrack checked={playerDataType === "tournament"} onChange={handleDataTypeSwitch} inputProps={{ 'aria-label': 'ant design' }} />
                     </Stack>
                 </div>
                 <div className="playertable-container">
@@ -231,22 +240,35 @@ function PlayersListPage() {
                 {playerDataType === "tournament" &&
                     <>
                         <CustomSelect
+                            label={"Offline/Online"}
+                            selectedValue={offlineOnlineStatus} options={["Both", "Offline", "Online"]}
+                            handleChange={handleOfflineOnlineChange}
+                            defaultValue="Both"
+                            sx={{marginTop: 2, width: 240}}
+                        />
+                        <CustomSelect
                             label={"Tournament Type"}
-                            selectedValue={tournamentType} options={["All", "Tier 1", "Tier 2", "CPT", "EWC"]}
+                            selectedValue={tournamentType} options={["All", "CPT", "EWC", "Tier 1", "Tier 2",]}
                             handleChange={handleTournamentTypeChange}
                             defaultValue="All"
+                            sx={{marginTop: 2, width: 240}}
                         />
                         <CustomSelect
                             label={"Tournament Region"}
                             selectedValue={region} options={["World",...tournamentRegions]}
                             handleChange={handleRegionChange}
                             defaultValue="World"
+                            sx={{marginTop: 2, width: 240}}
                         />
                     </>
                 }
-                <PlayerListCountryFilterSide
-                    selectedCountry={selectedCountry} handleCountryChange={handleCountryChange}
-                    allCountries={playerDataType === "ranked"? playerCountries : tourneyPlayerCountries}
+                <CustomSelect
+                    label={"Country"}
+                    selectedValue={selectedCountry}
+                    options={["World",...(playerDataType === "ranked"? playerCountries : tourneyPlayerCountries)]}
+                    handleChange={handleCountryChange}
+                    defaultValue={"World"}
+                    sx={{marginTop: 2, width: 240}}
                 />
                 <PlayerListCharacterFilter
                     charFilterContainer={charFilterContainer} characterRefs={characterRefs}

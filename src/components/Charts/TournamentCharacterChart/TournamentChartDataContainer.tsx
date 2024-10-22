@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from "react"
 import { useTournamentData } from "../../TournamentDataContainer"
 import { allCharacters } from "../../../Data/StaticData"
+import { useTournamentChartContext } from "./TournamentChartContextProvider"
 
 type TournamentChartDataProps = {
     uniquePlayers: boolean,
@@ -8,8 +9,9 @@ type TournamentChartDataProps = {
     offlineOnlineStatus: string,
 }
 
-export function useTournamentChartData({ region, offlineOnlineStatus, uniquePlayers }: TournamentChartDataProps){
-    const { charnamePlayerCountPairs, charnameToStats } = useTournamentData({ region, offlineOnlineStatus, uniquePlayers })
+export function useTournamentChartData(){
+    const { region, offlineOnlineStatus, uniquePlayers, tournamentType } = useTournamentChartContext()
+    const { charnamePlayerCountPairs, charnameToStats } = useTournamentData({ region, offlineOnlineStatus, uniquePlayers, tournamentType })
 
     const charnameCategories = useMemo(() => {
         return charnamePlayerCountPairs.map(([charName,]) => charName)

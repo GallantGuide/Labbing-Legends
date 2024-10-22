@@ -1,0 +1,32 @@
+.Chart {
+    display: flex;
+
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+
+}
+
+.SideBar{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    margin-left: 20px;
+}
+
+.SortButtons{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    background-color: rgb(44, 43, 43);
+    border: 1px solid rgb(65, 63, 63);
+    border-radius: 10px;
+
+    height: max-content;
+    
+    padding: 10px;
+
+}
+

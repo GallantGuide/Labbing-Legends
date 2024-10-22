@@ -3,29 +3,32 @@ import { FormControlLabel, Switch, FormControl, FormLabel, RadioGroup, Radio, Ty
 
 import { tournamentRegions } from "../../Data/StaticData"
 
-import "../Home/RankedChartPage.css"
+import "./TournamentChartPage.css"
 import { useLocation, useNavigate } from "react-router-dom"
 import { TournamentChart } from "../../components/Charts/TournamentCharacterChart/TournamentChart"
+
+import CustomSelect from "../../components/Custom Components/CustomSelect"
+
+import { useTournamentChartContext } from "../../components/Charts/TournamentCharacterChart/TournamentChartContextProvider"
+import { TournamentChartContextProvider } from "../../components/Charts/TournamentCharacterChart/TournamentChartContextProvider"
 
 export default function TournamentChartPage(){
     const navigate = useNavigate()
     const location = useLocation()
 
     const [showPlacements, setShowPlacements] = useState<boolean>(location.state?.showPlacements || true)
-    const [region, setRegion] = useState<string>(location.state?.region || "")
-    const [offlineOnlineStatus, setOfflineOnlineStatus] = useState<string>(location.state?.offlineOnlineStatus || "")
+    const [region, setRegion] = useState<string>(location.state?.region || "World")
+    const [offlineOnlineStatus, setOfflineOnlineStatus] = useState<string>(location.state?.offlineOnlineStatus || "Both")
     const [uniquePlayers, setUniquePlayers] = useState<boolean>(false)
+    const [tournamentType, setTournamentType] = useState<string>("All")
 
+    useEffect(() => {
+        // const timeoutId = setTimeout(() => {
+            navigate("/esports/", { replace: true, state: {region, offlineOnlineStatus, showPlacements}})
+        // }, 300)
 
-    // useEffect(() => {
-    //     const timeoutId = setTimeout(() => {
-    //         navigate("/esports/", { replace: true, state: {region, offlineOnlineStatus, showPlacements}})
-    //     }, 300)
-
-    //     return () => clearTimeout(timeoutId)
-    // },[region, offlineOnlineStatus, showPlacements])
-
-
+        // return () => clearTimeout(timeoutId)
+    },[region, offlineOnlineStatus, showPlacements, uniquePlayers])
 
     const handlePlacementsSwitch = (e: any) => {
         const isChecked = e.target.checked
@@ -37,29 +40,26 @@ export default function TournamentChartPage(){
         isChecked? setUniquePlayers(true) : setUniquePlayers(false)
     }
 
-    const handleRegionFilter = (e: any) => {
-        const newRegion = e.target.value
-
-        setRegion((prevRegion) => (prevRegion === newRegion ? "" : newRegion))
+    const handleRegionChange = (e: any) => {
+        const val = e.target.value
+        setRegion(val)
     }
 
-    const handleOfflineFilter = (e: any) => {
-        const newStatus = e.target.value
-
-        setOfflineOnlineStatus((prevStatus) => (prevStatus === newStatus ? "" : newStatus))
+    const handleOfflineOnlineChange = (e: any) => {
+        const val = e.target.value
+        setOfflineOnlineStatus(val)
     }
 
-    const formGroupLabelStyle = {color: "white", display: 'flex', fontWeight: 'normal'}
-    const radioLabelStyle= {color: "white", fontSize: 13}
+    const handleTournamentTypeChange = (e: any) => {
+        const val = e.target.value
+        setTournamentType(val)
+    }
 
     return(
         <div className="Chart">
-            <TournamentChart
-                showPlacements = {showPlacements}
-                uniquePlayers = {uniquePlayers}
-                region = {region}
-                offlineOnlineStatus = {offlineOnlineStatus}
-            />
+            <TournamentChartContextProvider {...{showPlacements, uniquePlayers, region, offlineOnlineStatus, tournamentType}}>
+                <TournamentChart/>
+            </TournamentChartContextProvider>
             <div className="SideBar">
                 <div className="SortButtons">
                     <FormControlLabel label="Show Placements" sx={{color: 'white', display: 'flex'}}
@@ -68,31 +68,28 @@ export default function TournamentChartPage(){
                     <FormControlLabel label="Unique by player" sx={{color: 'white', display: 'flex'}}
                         control={<Switch checked={uniquePlayers} aria-label="Unique by player" onChange={handleUniquePlayerSwitch}/>}
                     />
-                    <FormControl>
-                        <FormLabel sx={formGroupLabelStyle} id="radio-sorting">Region Filter</FormLabel>
-                        <RadioGroup
-                            aria-labelledby="radio-sorting"
-                            name="radio-sort-buttons-group"
-                            value={region}
-                            onClick={handleRegionFilter}
-                        >
-                            {tournamentRegions && tournamentRegions.map((region) => {
-                                return(
-                                    <FormControlLabel key={region} value={region} control={<Radio/>} label={<Typography sx={radioLabelStyle}>{region}</Typography>}/>
-                                )
-                            })}
-                        </RadioGroup>
-                        <FormLabel sx={formGroupLabelStyle} id="radio-sorting">Offline/Online Filter</FormLabel>
-                        <RadioGroup
-                            aria-labelledby="radio-sorting"
-                            name="radio-sort-buttons-group"
-                            value={offlineOnlineStatus}
-                            onClick={handleOfflineFilter}
-                        >
-                            <FormControlLabel value={"Offline"} control={<Radio/>} label={<Typography sx={radioLabelStyle}>{"Offline"}</Typography>}/>
-                            <FormControlLabel value={"Online"} control={<Radio/>} label={<Typography sx={radioLabelStyle}>{"Online"}</Typography>}/>
-                        </RadioGroup>
-                    </FormControl>
+                    <CustomSelect
+                        label={"Tournament Region"}
+                        selectedValue={region} options={["World",...tournamentRegions]}
+                        handleChange={handleRegionChange}
+                        defaultValue="World"
+                        sx={{marginTop: 2, width: 200}}
+                    />
+                    <CustomSelect
+                        label={"Tournament Type"}
+                        selectedValue={tournamentType} options={["All", "CPT", "EWC", "Tier 1", "Tier 2",]}
+                        handleChange={handleTournamentTypeChange}
+                        defaultValue="All"
+                        sx={{marginTop: 2, width: 200}}
+                    />
+                    <CustomSelect
+                        label={"Offline/Online"}
+                        selectedValue={offlineOnlineStatus} options={["Both", "Offline", "Online"]}
+                        handleChange={handleOfflineOnlineChange}
+                        defaultValue="Both"
+                        sx={{marginTop: 2, width: 200}}
+                    />
+                    
                 </div>
             </div>
         </div>

@@ -8,9 +8,10 @@ type StyledSelectProps = {
   options: string[],
   handleChange: (e: SelectChangeEvent<string>) => void,
   defaultValue?: string,
+  sx?: SxProps
 };
 
-export default function StyledSelect({ label, selectedValue, options, handleChange, defaultValue }: StyledSelectProps) {
+export default function StyledSelect({ label, selectedValue, options, handleChange, defaultValue, sx }: StyledSelectProps) {
   const selectRef = useRef(null);
   
   const unfocusedBorderColor = "rgb(65, 63, 63)";
@@ -20,7 +21,7 @@ export default function StyledSelect({ label, selectedValue, options, handleChan
 
   // Common Select and Menu styles
   const selectStyle: SxProps = {
-    width: 240,
+    width: '100%',
     backgroundColor: unfocusedBackgroundColor,
     borderRadius: 3,
     color: 'white',
@@ -49,6 +50,9 @@ export default function StyledSelect({ label, selectedValue, options, handleChan
     },
     "&.Mui-focused.MuiInputBase-root":{
       backgroundColor: focusedBackgroundColor
+    },
+    "& .MuiOutlinedInput-input":{
+      padding: '14px 14px'
     }
   };
 
@@ -88,7 +92,7 @@ export default function StyledSelect({ label, selectedValue, options, handleChan
   });
 
   return (
-    <FormControl sx={{ marginTop: 2 }}>
+    <FormControl sx={sx}>
       <InputLabel sx={inputLabelStyle} id={`${label}-label`}>{label}</InputLabel>
       <Select
         sx={selectStyle}

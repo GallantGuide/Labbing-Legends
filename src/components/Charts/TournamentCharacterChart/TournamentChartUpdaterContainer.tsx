@@ -1,19 +1,19 @@
-import { useEffect, useCallback, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { charnameToIcon } from "../../../Data/Icons/Characters/Named/CharacterNamedIcons";
 import { useTournamentChartData } from "./TournamentChartDataContainer";
 import HighchartsReact from "highcharts-react-official"
-import useTournamentChartStaticOptions from "./TournamentChartStaticContainer";
+import { useTournamentChartContext } from "./TournamentChartContextProvider";
 
 type TournamentChartDataProps = {
-    showPlacements: boolean,
-    uniquePlayers: boolean,
-    region: string ,
-    offlineOnlineStatus: string,
+    // showPlacements: boolean,
+    // uniquePlayers: boolean,
+    // region: string ,
+    // offlineOnlineStatus: string,
     chartRef: React.RefObject<HighchartsReact.RefObject> // change
 }
 
 
-export function useTournamentChartUpdater({ chartRef, showPlacements, region, offlineOnlineStatus, uniquePlayers }: TournamentChartDataProps){
+export function useTournamentChartUpdater({ chartRef }: TournamentChartDataProps){
     // Series styling data
     const staticConfig = useRef({
         iconWidth: 60,
@@ -23,7 +23,8 @@ export function useTournamentChartUpdater({ chartRef, showPlacements, region, of
     }).current;
     const chartWidth = useMemo(() => (staticConfig.iconWidth + staticConfig.iconPadding) * 24, [])
 
-    const { charnameCategories, seriesByPlayerCount, seriesByPlayerPlacements } = useTournamentChartData({ region, offlineOnlineStatus, uniquePlayers })
+    const { showPlacements } = useTournamentChartContext()
+    const { charnameCategories, seriesByPlayerCount, seriesByPlayerPlacements } = useTournamentChartData()
 
     // Get series objects
     const seriesList = useMemo((): Highcharts.Options["series"] => {
@@ -35,7 +36,10 @@ export function useTournamentChartUpdater({ chartRef, showPlacements, region, of
                     type: 'column',
                     stack: 'Placements',
                     color: staticConfig.barColors[i],
-                    data: seriesByPlayerPlacements.map((placements) => placements[i]),
+                    data: seriesByPlayerPlacements.map((placements, idx) => ({
+                        y: placements[i],
+                        characterIndex: idx
+                    })),
                 }
                 res.push(tmp)
             }
@@ -45,7 +49,10 @@ export function useTournamentChartUpdater({ chartRef, showPlacements, region, of
             {
                 name: 'Player Count',
                 type: 'column',
-                data: seriesByPlayerCount,
+                data: seriesByPlayerCount.map((count, idx) => ({
+                    y: count,
+                    characterIndex: idx
+                })),
                 color: '#206DE9FF',
             }
         ]
@@ -63,7 +70,7 @@ export function useTournamentChartUpdater({ chartRef, showPlacements, region, of
             }
             
             chart.update({
-                chart: { width: chartWidth },
+                chart: { width: chartWidth, displayErrors: true },
                 xAxis: {
                     categories: charnameCategories,
                     labels: {
@@ -81,6 +88,7 @@ export function useTournamentChartUpdater({ chartRef, showPlacements, region, of
                     }
                 },
             }, true)
+
 
             chart.redraw()
         }

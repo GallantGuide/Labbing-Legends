@@ -7,6 +7,7 @@ type TournamentDataContainerProps = {
     region?: string,
     offlineOnlineStatus?: string,
     uniquePlayers?: boolean
+    tournamentType?: string
 }
 
 type CharacterStats = {
@@ -16,7 +17,9 @@ type CharacterStats = {
     players: TourneyPlayer[], // list of people playing the character
 };
 
-export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers }: TournamentDataContainerProps) {
+export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers, tournamentType }: TournamentDataContainerProps) {
+    
+
     // Create a memoized filtered dataset
     const filteredData = useMemo(() => {
         let data = esportsData
@@ -27,9 +30,10 @@ export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers }
             
             data = data.filter(player => {
                 // Check all conditions in one pass
-                const regionMatch = !region || player.Region === region // no region specified then default to true
-                const eventMatch = !offlineOnlineStatus ||
+                const regionMatch = (region === "World") || player.Region === region // no region specified then default to true
+                const eventMatch = (offlineOnlineStatus === "Both") ||
                     (player.Event.includes("Offline") === (offlineOnlineStatus === "Offline"))
+                const tourneyTypeMatch = (tournamentType === "All") || player.TournamentType === tournamentType
                 
                 // Unique players check
                 if (uniquePlayers) {
@@ -39,12 +43,12 @@ export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers }
                     seen!.add(key);
                 }
                 
-                return regionMatch && eventMatch
+                return regionMatch && eventMatch && tourneyTypeMatch
             });
         }
         
         return data;
-    }, [esportsData, region, offlineOnlineStatus, uniquePlayers])
+    }, [esportsData, region, offlineOnlineStatus, uniquePlayers, tournamentType])
 
     const charnameToStats = useMemo(() => {
         const stats = new Map<string, CharacterStats>()
