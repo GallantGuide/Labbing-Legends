@@ -26,7 +26,7 @@ export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers, 
         
         // Apply all filters in a single pass
         if (region || offlineOnlineStatus || uniquePlayers) {
-            const seen = uniquePlayers ? new Set<string>() : null
+            
             
             data = data.filter(player => {
                 // Check all conditions in one pass
@@ -35,16 +35,23 @@ export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers, 
                     (player.Event.includes("Offline") === (offlineOnlineStatus === "Offline"))
                 const tourneyTypeMatch = (tournamentType === "All") || player.TournamentType === tournamentType
                 
-                // Unique players check
-                if (uniquePlayers) {
+                return regionMatch && eventMatch && tourneyTypeMatch
+            })
+
+            // IMPORTANT: **Unique player filter must occur after other filters**
+            if(uniquePlayers){
+                const seen = new Set<string>()
+                data = data.filter(player => {
+                    // Unique players check
                     // **IMPORTANT**: Distinguish by name, placement, and character
                     const key = `${player.Name}-${player.Placement}-${player.Character}`
-                    if (seen!.has(key)) return false;
-                    seen!.add(key);
-                }
-                
-                return regionMatch && eventMatch && tourneyTypeMatch
-            });
+                    if (!(seen.has(key))){
+                        seen.add(key)
+                        return true
+                    }
+                    return false
+                })
+            }
         }
         
         return data;
