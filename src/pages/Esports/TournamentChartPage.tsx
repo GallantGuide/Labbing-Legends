@@ -16,9 +16,11 @@ export default function TournamentChartPage(){
     const location = useLocation()
 
     const [showPlacements, setShowPlacements] = useState<boolean>(location.state?.showPlacements || true)
+    const [uniquePlayers, setUniquePlayers] = useState<boolean>(false)
+    const [showChampions, setShowChampions] = useState<boolean>(false)
+
     const [region, setRegion] = useState<string>(location.state?.region || "World")
     const [offlineOnlineStatus, setOfflineOnlineStatus] = useState<string>(location.state?.offlineOnlineStatus || "Both")
-    const [uniquePlayers, setUniquePlayers] = useState<boolean>(false)
     const [tournamentType, setTournamentType] = useState<string>("All")
     const [season, setSeason] = useState<string>("Two")
 
@@ -40,6 +42,11 @@ export default function TournamentChartPage(){
         isChecked? setUniquePlayers(true) : setUniquePlayers(false)
     }
 
+    const handleShowChampionsSwitch = (e: any) => {
+        const isChecked = e.target.checked
+        isChecked? setShowChampions(true) : setShowChampions(false)
+    }
+
     const handleRegionChange = (e: any) => {
         const val = e.target.value
         setRegion(val)
@@ -57,12 +64,14 @@ export default function TournamentChartPage(){
 
     const handleSeasonChange = (e: any) => {
         const val = e.target.value
+        //FIXME:
+        setOfflineOnlineStatus("Both")
         setSeason(val)
     }
 
     return(
         <div className="tournament-chart">
-            <TournamentChartContextProvider {...{showPlacements, uniquePlayers, region, offlineOnlineStatus, tournamentType, season}}>
+            <TournamentChartContextProvider {...{showPlacements, showChampions, uniquePlayers, region, offlineOnlineStatus, tournamentType, season}}>
                 <TournamentChart/>
             </TournamentChartContextProvider>
             <div className="tournament-chart-sidebar">
@@ -74,22 +83,29 @@ export default function TournamentChartPage(){
                     sx={{marginTop: 2, mb: 'auto', width: 200}}
                 />
                 <div className="tournament-chart-sidebar-filters">
-                    <FormControlLabel label="Show Placements" sx={{color: 'white', display: 'flex'}}
-                        control={<Switch checked={showPlacements} aria-label="Show Placements" onChange={handlePlacementsSwitch}/>}
+                    {!showChampions &&
+                        <FormControlLabel label="Show Placements" sx={{color: 'white', display: 'flex'}}
+                            control={<Switch checked={showPlacements} aria-label="Show Placements" onChange={handlePlacementsSwitch}/>}
+                        />
+                    }
+                    <FormControlLabel label="Show Champions" sx={{color: 'white', display: 'flex'}}
+                        control={<Switch checked={showChampions} aria-label="Show Champions" onChange={handleShowChampionsSwitch}/>}
                     />
                     <FormControlLabel label="Unique by player" sx={{color: 'white', display: 'flex'}}
                         control={<Switch checked={uniquePlayers} aria-label="Unique by player" onChange={handleUniquePlayerSwitch}/>}
                     />
-                    <CustomSelect
-                        label={"Offline/Online"}
-                        selectedValue={offlineOnlineStatus} options={["Both", "Offline", "Online"]}
-                        handleChange={handleOfflineOnlineChange}
-                        defaultValue="Both"
-                        sx={{marginTop: 2, width: 200}}
-                    />
+                    {season === "Two" &&
+                        <CustomSelect
+                            label={"Offline/Online"}
+                            selectedValue={offlineOnlineStatus} options={["Both", "Offline", "Online"]}
+                            handleChange={handleOfflineOnlineChange}
+                            defaultValue="Both"
+                            sx={{marginTop: 2, width: 200}}
+                        />
+                    }
                     <CustomSelect
                         label={"Tournament Type"}
-                        selectedValue={tournamentType} options={["All", "CPT", "EWC", "Tier 1", "Tier 2",]}
+                        selectedValue={tournamentType} options={season === "Two"? ["All", "CPT", "EWC", "Tier 1", "Tier 2",] : ["All", "CPT", "Tier 1", "Tier 2",]}
                         handleChange={handleTournamentTypeChange}
                         defaultValue="All"
                         sx={{marginTop: 2, width: 200}}

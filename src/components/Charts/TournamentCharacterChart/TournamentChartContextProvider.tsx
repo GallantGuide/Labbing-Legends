@@ -2,6 +2,7 @@ import {createContext, useContext} from 'react'
 
 type TournamentChartContextType = {
     showPlacements: boolean,
+    showChampions: boolean,
     uniquePlayers: boolean,
     region: string,
     offlineOnlineStatus: string,

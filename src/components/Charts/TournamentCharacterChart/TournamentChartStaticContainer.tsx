@@ -1,7 +1,10 @@
 import { chart } from "highcharts";
 import { useRef } from "react";
+import { useTournamentChartContext } from "./TournamentChartContextProvider";
 
 export default function useTournamentChartStaticOptions(){
+    const {season} = useTournamentChartContext()
+
     const chartOptions: Highcharts.Options["chart"] = {
         type: "column",
         height: 750,
@@ -20,7 +23,7 @@ export default function useTournamentChartStaticOptions(){
     }
 
     const titleOptions: Highcharts.Options["title"] = {
-        text: `Character Usage of Top 16 Players in Season 2 Tournaments`, //FIXME: Season number eventually dynamic
+        text: `Character Usage in Top 16 Players of Season ${season === "Two"? "2" : 1} Tournaments`, //FIXME: Season number eventually dynamic
         align: "center",
         style: {
             color: 'white'

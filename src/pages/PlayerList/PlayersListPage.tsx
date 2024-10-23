@@ -49,10 +49,11 @@ function PlayersListPage() {
     const [region, setRegion] = useState<string>(location.state?.region || "World")
     const [tournamentType, setTournamentType] = useState<string>(location.state?.tournamentType || "All")
     const [offlineOnlineStatus, setOfflineOnlineStatus] = useState<string>(location.state?.offlineOnlineStatus || "Both")
+    const [season, setSeason] = useState<string>(location.state?.season || "Two")
 
     // Data from custom hooks
     const { charnameToPlayersByMR, playersByMR, playerCountries } = useRankData({ playerLimit })
-    const { charnameToPlayersByPlacement, playersByEventAndPlacing, tourneyPlayerCountries } = useTournamentData({})
+    const { charnameToPlayersByPlacement, playersByEventAndPlacing, tourneyPlayerCountries } = useTournamentData({season})
     
 
     useEffect(() => {
@@ -86,7 +87,7 @@ function PlayersListPage() {
         navigate(`/players/${selectedCharacter || ""}`, { replace: true})
         
     }, [//ranked state triggers
-        region, tournamentType, offlineOnlineStatus, //tournament state triggers
+        region, tournamentType, offlineOnlineStatus, season, //tournament state triggers
         selectedCharacter, debouncedSearchValue, selectedCountry, //shared filter triggers
         playerDataType])
 
@@ -206,6 +207,11 @@ function PlayersListPage() {
         setOfflineOnlineStatus(val)
     }
 
+    const handleSeasonChange = (e:any) => {
+        const val = e.target.value
+        setSeason(val)
+    }
+
     const sideBarFilterContainerStyle: CSSProperties = {
         display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
         position: 'absolute', left: 'calc(50% + 500px)', maxWidth: 300, marginLeft: 10, marginTop: 53
@@ -221,22 +227,31 @@ function PlayersListPage() {
                     </Stack>
                 </div>
                 <div className="playertable-container">
-                    <PlayersTable players={players} selectedCharacter={selectedCharacter} playerDataType={playerDataType}/>
+                    <PlayersTable season={season} players={players} selectedCharacter={selectedCharacter} playerDataType={playerDataType}/>
                 </div>
             </div>
             <div className="sidebar-filters" style={sideBarFilterContainerStyle}>
                 {playerDataType === "tournament" &&
                     <>
                         <CustomSelect
-                            label={"Offline/Online"}
-                            selectedValue={offlineOnlineStatus} options={["Both", "Offline", "Online"]}
-                            handleChange={handleOfflineOnlineChange}
-                            defaultValue="Both"
+                            label={"Season"}
+                            selectedValue={season} options={["Two", "One"]}
+                            handleChange={handleSeasonChange}
+                            defaultValue="Two"
                             sx={{marginTop: 2, width: 240}}
                         />
+                        {season === "Two" &&
+                            <CustomSelect
+                                label={"Offline/Online"}
+                                selectedValue={offlineOnlineStatus} options={["Both", "Offline", "Online"]}
+                                handleChange={handleOfflineOnlineChange}
+                                defaultValue="Both"
+                                sx={{marginTop: 2, width: 240}}
+                            />
+                        }
                         <CustomSelect
                             label={"Tournament Type"}
-                            selectedValue={tournamentType} options={["All", "CPT", "EWC", "Tier 1", "Tier 2",]}
+                            selectedValue={tournamentType} options={season ==="Two"? ["All", "CPT", "EWC", "Tier 1", "Tier 2",] : ["All", "CPT", "Tier 1", "Tier 2",]}
                             handleChange={handleTournamentTypeChange}
                             defaultValue="All"
                             sx={{marginTop: 2, width: 240}}

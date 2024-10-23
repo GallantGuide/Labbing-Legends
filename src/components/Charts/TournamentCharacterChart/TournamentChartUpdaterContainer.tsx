@@ -23,11 +23,25 @@ export function useTournamentChartUpdater({ chartRef }: TournamentChartDataProps
     }).current;
     const chartWidth = useMemo(() => (staticConfig.iconWidth + staticConfig.iconPadding) * 25, [])
 
-    const { showPlacements } = useTournamentChartContext()
+    const { showPlacements, showChampions, } = useTournamentChartContext()
     const { charnameCategories, seriesByPlayerCount, seriesByPlayerPlacements } = useTournamentChartData()
 
     // Get series objects
     const seriesList = useMemo((): Highcharts.Options["series"] => {
+        if(showChampions){ // Top 1 only
+            return [
+                {
+                    name: staticConfig.intervalTitles[3],
+                    type: 'column',
+                    stack: 'Top 1',
+                    color: staticConfig.barColors[3],
+                    data: seriesByPlayerPlacements.map((placements, idx) => ({
+                        y: placements[3],
+                        characterIndex: idx
+                    })),
+                }
+            ]
+        }
         if(showPlacements){
             const res: any[] = []
             for(let i = 3; i >= 0; i--){
@@ -56,7 +70,7 @@ export function useTournamentChartUpdater({ chartRef }: TournamentChartDataProps
                 color: '#206DE9FF',
             }
         ]
-    }, [showPlacements, charnameCategories, seriesByPlayerCount, seriesByPlayerPlacements])
+    }, [showPlacements, showChampions, charnameCategories, seriesByPlayerCount, seriesByPlayerPlacements])
 
 
     useEffect(() =>{
@@ -65,7 +79,7 @@ export function useTournamentChartUpdater({ chartRef }: TournamentChartDataProps
             if(seriesList){
                 chart.update({
                     series: seriesList
-                }, true, true)
+                }, false, true, undefined)
             }
             
             chart.update({
@@ -86,7 +100,7 @@ export function useTournamentChartUpdater({ chartRef }: TournamentChartDataProps
                         }
                     }
                 },
-            }, true)
+            }, false, true, undefined)
 
             chart.redraw()
         }

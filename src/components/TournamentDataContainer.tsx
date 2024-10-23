@@ -1,7 +1,8 @@
 import { useEffect, useMemo } from "react"
 import tournamentDataSeason2 from "../Data/Esport_Data_sort.json"
+import tournamentDataSeason1 from "../Data/Esport_Data_season1v2.json"
 import { CharacterToTourneyPlayers, StringToNumber, TourneyPlayer } from "../Data/Types"
-import { allCharacters } from "../Data/StaticData"
+import { allCharacters, allCharactersSeason1 } from "../Data/StaticData"
 
 type TournamentDataContainerProps = {
     region?: string,
@@ -21,7 +22,7 @@ type CharacterStats = {
 export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers, tournamentType, season }: TournamentDataContainerProps) {
     // Create a memoized filtered dataset
     const filteredData = useMemo(() => {
-        let data = tournamentDataSeason2 //TODO: dependent on season
+        let data = (season==="One")? tournamentDataSeason1 : tournamentDataSeason2
         
         // Apply all filters in a single pass
         if (region || offlineOnlineStatus || uniquePlayers) {
@@ -52,25 +53,39 @@ export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers, 
                 })
             }
         }
+        // console.log(data)
         
         return data;
-    }, [tournamentDataSeason2, region, offlineOnlineStatus, uniquePlayers, tournamentType, season])
+    }, [tournamentDataSeason2, tournamentDataSeason1, region, offlineOnlineStatus, uniquePlayers, tournamentType, season])
 
     const charnameToStats = useMemo(() => {
         const stats = new Map<string, CharacterStats>()
         
         // Initialize stats for all characters
-        allCharacters.forEach(char => {
-            stats.set(char, {
-                totalCount: 0,
-                placementCounts: [0, 0, 0, 0],
-                players: []
+        if(season === "Two"){
+            allCharacters.forEach(char => {
+                stats.set(char, {
+                    totalCount: 0,
+                    placementCounts: [0, 0, 0, 0],
+                    players: []
+                })
             })
-        })
+        }
+        else{
+            allCharactersSeason1.forEach(char => {
+                stats.set(char, {
+                    totalCount: 0,
+                    placementCounts: [0, 0, 0, 0],
+                    players: []
+                })
+            })
+        }
 
         // Single pass through filtered data
         filteredData.forEach(player => {
+            // console.log(player)
             const stat = stats.get(player.Character)!
+            // console.log(stat)
             stat.totalCount++
             stat.players.push(player)
             
@@ -80,7 +95,7 @@ export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers, 
             else if (player.Placement <= 8) stat.placementCounts[1]++
             else if (player.Placement <= 16) stat.placementCounts[0]++
         })
-
+        // console.log(Array.from(stats.entries()))
         return stats
     }, [filteredData])
 

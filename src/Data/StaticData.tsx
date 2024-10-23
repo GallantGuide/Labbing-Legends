@@ -26,4 +26,30 @@ export const allCharacters: string[] = [
     "Random"
 ]
 
+export const allCharactersSeason1: string[] = [
+    "A.K.I.",
+    "Akuma",
+    "Blanka",
+    "Cammy",
+    "Chun-Li",
+    "Dee Jay",
+    "Dhalsim",
+    "Ed",
+    "Edmond Honda",
+    "Guile",
+    "Jamie",
+    "JP",
+    "Juri",
+    "Ken",
+    "Kimberly",
+    "Lily",
+    "Luke",
+    "Manon",
+    "Marisa",
+    "Rashid",
+    "Ryu",
+    "Zangief",
+    "Random"
+]
+
 export const tournamentRegions: string[] = [ "Europe & Oceania", "North & Central America", "Asia", "South America & Africa" ]

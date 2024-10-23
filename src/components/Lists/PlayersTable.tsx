@@ -13,11 +13,12 @@ import React from "react"
 type PlayersTableDataProps = {
     players: Player[] | TourneyPlayer[],
     selectedCharacter: string | null,
-    playerDataType: string
+    playerDataType: string,
+    season: string
 }
 
 // Always keep this memoized. players prop is too big
-export const PlayersTable = React.memo(({ players, selectedCharacter, playerDataType }: PlayersTableDataProps) => {
+export const PlayersTable = React.memo(({ players, selectedCharacter, playerDataType, season }: PlayersTableDataProps) => {
 
     const tableContainerStyle: SxProps = {
         border: '1px solid rgb(65, 63, 63);',
@@ -66,20 +67,44 @@ export const PlayersTable = React.memo(({ players, selectedCharacter, playerData
                 <TableBody>
                     {players && players.map((player, idx) => {
                         let eventName = ""
-                        if(!usingRankedData){
+                        if(!usingRankedData){ //FIXME: Terrible... shouldn't have to do when we get cleaner data
                             eventName = (player as TourneyPlayer).Event
-                            // short event names for WW, Offline/Online
-                            if(eventName.includes(":")){
-                                const i = eventName.indexOf(":")
-                                eventName = eventName.substring(i+1)
+                            // shorten event names for WW, Offline/Online
+                            if(season === "Two"){
+                                if(eventName.includes(":")){
+                                    const i = eventName.indexOf(":")
+                                    eventName = eventName.substring(i+1)
+                                }
+                                else if(eventName.includes("Offline Event")){
+                                    eventName = eventName.substring(14)
+                                }
+                                else if(eventName.includes("WW")){
+                                    eventName = "WW " + eventName.substring(23)
+                                }
                             }
-                            else if(eventName.includes("Offline Event")){
-                                eventName = eventName.substring(14)
-                            }
-                            else if(eventName.includes("WW")){
-                                eventName = "WW " + eventName.substring(23)
+                            else{
+                                if(!eventName.includes("CPT")){
+                                    if(eventName.includes(":")){
+                                        if(eventName.includes("Offline:  :") || eventName.includes("Offline: :")){
+                                            let i = eventName.indexOf(":")
+                                            eventName = eventName.substring(i+1)
+                                        }
+                                        let i = eventName.indexOf(":")
+                                        eventName = eventName.substring(i+1)
+                                    }
+                                }
+                                else if(eventName.includes("Offline Event")){
+                                    eventName = eventName.substring(14)
+                                }
+                                else if(eventName.includes("Offline:")){
+                                    eventName = eventName.substring(8)
+                                }
+                                else if(eventName.includes("WW Point Scoring Event")){
+                                    eventName = "WW " + eventName.substring(23)
+                                }
                             }
                             eventName = eventName.replace(/"/g, ' ')
+                            eventName = eventName.replace(/\+/g, ' ')
                         }
                         return(
                             (

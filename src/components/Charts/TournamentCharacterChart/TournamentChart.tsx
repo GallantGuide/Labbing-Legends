@@ -21,7 +21,7 @@ export function TournamentChart(){
 
     // Static options contain chart styling
     const { staticOptions } = useTournamentChartStaticOptions()
-    const { showPlacements, region, offlineOnlineStatus, uniquePlayers, tournamentType} = useTournamentChartContext()
+    const { showPlacements, region, offlineOnlineStatus, uniquePlayers, tournamentType, season} = useTournamentChartContext()
     
     // Update chart data depending on filter changes
     useTournamentChartUpdater({ chartRef })
@@ -37,7 +37,7 @@ export function TournamentChart(){
                 chartContainer.removeEventListener('click', handleChartClick)
             }
         }
-    }, [region, offlineOnlineStatus, uniquePlayers, tournamentType])
+    }, [region, offlineOnlineStatus, uniquePlayers, tournamentType, season])
 
     // **Carries over filters to playerlist page**
     const handleChartClick = (e: any) => {
@@ -50,7 +50,7 @@ export function TournamentChart(){
                 
                 // pass state values with navigation to players list page
                 navigate(`/players/${charName}`,
-                    {state: {playerDataType, region, offlineOnlineStatus, uniquePlayers, tournamentType}})
+                    {state: {playerDataType, region, offlineOnlineStatus, uniquePlayers, tournamentType, season}})
             }
         }
     }
