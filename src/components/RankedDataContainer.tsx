@@ -3,94 +3,75 @@ import { CharacterToPlayers, StringToNumber, Player, CharacterPlayerCountPairs }
 
 import { allCharacters } from "../Data/StaticData";
 
-// import ranks from "../Data/Ranksv5.json"
-import ranks from "../Data/Players10_16_24v2.json"
+import rankData from "../Data/Players10_20_24v2.json"
+import { filter } from "echarts/types/src/export/api/util.js";
 
 type RankDataProps = {
     playerLimit?: number
 }
 
+type CharacterStats = {
+    totalCount: number,
+    players: Player[],
+    MRintervalCounts: [number, number, number]
+}
+
 export function useRankData({ playerLimit }: RankDataProps){
-    const rankData = ranks
 
-    function getFilteredData(): Player[]{
+    const filteredData = useMemo((): Player[] => {
+        // slice() creates copy
         return rankData.slice(0, playerLimit? playerLimit : 500)
-    }
+    }, [rankData, playerLimit])
 
-    function getCharacterPlayerCountPairs() : CharacterPlayerCountPairs {
-        const data: Player[] = getFilteredData()
-        const tmp: StringToNumber = {}
+    const charnameToStats = useMemo(() => {
+        const stats = new Map<string, CharacterStats>()
 
-        data.forEach((player) => {
-            const charName = player.Character
-            if (charName in tmp)
-                tmp[charName]++
-            else
-                tmp[charName] = 1
+        allCharacters.forEach(char => {
+            stats.set(char, {
+                totalCount: 0,
+                players: [],
+                MRintervalCounts: [0,0,0]
+            })
         })
 
-        allCharacters.forEach((charName) =>{
-            if(!(charName in tmp)){
-                tmp[charName] = 0
-            }
+        filteredData.forEach(player => {
+            const stat = stats.get(player.Character)!
+            stat.totalCount++
+            stat.players.push(player)
+
+            const playerMR = parseInt(player.MR.substring(0, 4), 10)
+            if(playerMR >= 2300) stat.MRintervalCounts[2]++
+            else if(playerMR >= 2200) stat.MRintervalCounts[1]++
+            else stat.MRintervalCounts[0]++
+        })
+        // console.log(stats)
+        return stats
+
+    }, [filteredData])
+
+    const charnamePlayerCountPairs = useMemo(() =>
+        Array.from(charnameToStats.entries())
+        .map(([char, stats]) => [char, stats.totalCount] as [string, number])
+        .sort(([,a], [,b]) => b - a),
+    [filteredData])
+
+    const charnameToPlayersByMR = useMemo(() => {
+        const result: CharacterToPlayers = {}
+        // Already pre-sorted by MR
+        charnameToStats.forEach((stats, char) => {
+            result[char] = [...stats.players]
         })
 
-        return Object.entries(tmp).sort(([, freqA],[,freqB]) => freqA-freqB)
+        // console.log(result)
+        return result
+    }, [filteredData])
+
+    return {
+        rankData,
+        charnamePlayerCountPairs,
+        charnameToPlayersByMR,
+        charnameToStats,
+        playersByMR: filteredData,
+        playerCountries: useMemo(() => Array.from(new Set(filteredData.map(p => p.Country))),[filteredData])
     }
-
-    function getCharacterToPlayersByMR() : CharacterToPlayers{
-        const data: Player[] = getFilteredData()
-        const tmp: CharacterToPlayers = {}
-
-        for(const player of data){
-            const charName = player.Character
-
-            if (charName in tmp)
-                tmp[charName].push(player)
-            else
-                tmp[charName] = [player]
-        }
-
-        allCharacters.forEach((charName) =>{
-            if(!(charName in tmp)){
-                tmp[charName] = []
-            }
-        })
-
-        return tmp
-    }
-
-    function getPlayersListByMR(): Player[] {
-        const data: Player[] = getFilteredData()
-        const tmp: Player[] = []
-
-        for(const player of data){
-            tmp.push(player)
-        }
-
-        return tmp
-    }
-
-    function getAllCountries() : string[] {
-        const data: Player[] = getFilteredData()
-        const seen: Set<string> = new Set()
-        const tmp: string[] = []
-
-        data.forEach((player) =>{
-            const country = player.Country
-            if(!(seen.has(country))){
-                seen.add(country)
-                tmp.push(country)
-            }
-        })
-
-        return tmp
-    }
-
-    const characterPlayerCountPairs: CharacterPlayerCountPairs = useMemo(() => getCharacterPlayerCountPairs(), [rankData, playerLimit])
-    const characterToPlayersByMR: CharacterToPlayers = useMemo(() => getCharacterToPlayersByMR(), [rankData, playerLimit])
-    const playersListByMR: Player[] = useMemo(() => getPlayersListByMR(), [rankData, playerLimit])
-    const playerCountries: string[] = useMemo(() => getAllCountries(), [rankData, playerLimit])
-
-    return {rankData, characterPlayerCountPairs, characterToPlayersByMR, playersListByMR, playerCountries}
 }

@@ -9,7 +9,6 @@ import { TournamentChart } from "../../components/Charts/TournamentCharacterChar
 
 import CustomSelect from "../../components/Custom Components/CustomSelect"
 
-import { useTournamentChartContext } from "../../components/Charts/TournamentCharacterChart/TournamentChartContextProvider"
 import { TournamentChartContextProvider } from "../../components/Charts/TournamentCharacterChart/TournamentChartContextProvider"
 
 export default function TournamentChartPage(){

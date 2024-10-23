@@ -4,10 +4,10 @@ import { useState, useRef } from 'react';
 
 type StyledSelectProps = {
   label: string,
-  selectedValue: string | null,
-  options: string[],
-  handleChange: (e: SelectChangeEvent<string>) => void,
-  defaultValue?: string,
+  selectedValue: string | number | null,
+  options: string[] | number[],
+  handleChange: (e: SelectChangeEvent<string | number>) => void,
+  defaultValue?: string | number,
   sx?: SxProps
 };
 

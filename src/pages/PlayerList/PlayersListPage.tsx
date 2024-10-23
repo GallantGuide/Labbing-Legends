@@ -51,7 +51,7 @@ function PlayersListPage() {
     const [offlineOnlineStatus, setOfflineOnlineStatus] = useState<string>(location.state?.offlineOnlineStatus || "Both")
 
     // Data from custom hooks
-    const { characterToPlayersByMR, playersListByMR, playerCountries } = useRankData({ playerLimit })
+    const { charnameToPlayersByMR, playersByMR, playerCountries } = useRankData({ playerLimit })
     const { charnameToPlayersByPlacement, playersByEventAndPlacing, tourneyPlayerCountries } = useTournamentData({})
     
 
@@ -59,7 +59,7 @@ function PlayersListPage() {
         // console.log("Filters Effect")
         let tmp: Player[] | TourneyPlayer[] = []
         if(playerDataType === "ranked"){
-            tmp = selectedCharacter? characterToPlayersByMR[selectedCharacter] : playersListByMR
+            tmp = selectedCharacter? charnameToPlayersByMR[selectedCharacter] : playersByMR
             if(selectedCountry && selectedCountry != "World") //FIXME: 
                 tmp = tmp.filter((player) => player.Country === selectedCountry)
             if(debouncedSearchValue != "")
@@ -204,18 +204,6 @@ function PlayersListPage() {
     const handleOfflineOnlineChange = (e: any) => {
         const val = e.target.value
         setOfflineOnlineStatus(val)
-    }
-
-    const selectFilterContainerStyle: CSSProperties = {
-        width: 100,
-        marginRight: 5
-    }
-
-    const selectStyle: CSSProperties = {
-        width: 100, minHeight: 25,
-        padding: '0.4em 6em 0.4em 1em',
-        cursor: 'pointer', outline: 'none',
-        borderRadius: 5,
     }
 
     const sideBarFilterContainerStyle: CSSProperties = {

@@ -1,7 +1,10 @@
 import { chart } from "highcharts";
 import { useRef } from "react";
+import { useRankedChartData } from "./RankedChartDataContainer";
 
-export default function useTournamentChartStaticOptions(){
+export default function useRankedChartStaticOptions(){
+    const { totalPlayers } = useRankedChartData()
+
     const chartOptions: Highcharts.Options["chart"] = {
         type: "column",
         height: 750,
@@ -20,7 +23,7 @@ export default function useTournamentChartStaticOptions(){
     }
 
     const titleOptions: Highcharts.Options["title"] = {
-        text: `Character Usage of Top 16 Players in Season 2 Tournaments`, //FIXME: Season number eventually dynamic
+        text: `Character Usage of Top ${totalPlayers} Ranked Players in Season 2`, //FIXME Season number will eventually be dynamic
         align: "center",
         style: {
             color: 'white'

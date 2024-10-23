@@ -5,14 +5,14 @@ import { CountryPlayerCountPairs, StringToNumber, CountryPlayerCountDataProps } 
 import "./CountryPlayerCountPanel.css"
 
 function useCountryPlayerCountData({ playerLimit }: CountryPlayerCountDataProps) {
-    const { characterToPlayersByMR } = useRankData({ playerLimit })
+    const { charnameToPlayersByMR } = useRankData({ playerLimit })
 
     const getCountryToPlayerCount = () => {
         const countryToPlayerCount: StringToNumber = {}
         const seenUsercodes = new Set<string>()
 
         // get player count per country (disregard those with multiple characters in data set)
-        for(const players of Object.values(characterToPlayersByMR)){
+        for(const players of Object.values(charnameToPlayersByMR)){
             players.forEach((player) => {
                 const country: string = player["Country"]
                 const userCode: string = player["Usercode"]
@@ -55,7 +55,7 @@ function useCountryPlayerCountData({ playerLimit }: CountryPlayerCountDataProps)
         return sortedCountries
     }
 
-    const countryToPlayerCount: CountryPlayerCountPairs = useMemo(() => getCountryToPlayerCount(), [characterToPlayersByMR])
+    const countryToPlayerCount: CountryPlayerCountPairs = useMemo(() => getCountryToPlayerCount(), [charnameToPlayersByMR])
 
     return { countryToPlayerCount }
 }

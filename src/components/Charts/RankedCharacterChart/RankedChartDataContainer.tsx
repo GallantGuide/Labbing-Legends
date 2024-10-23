@@ -1,87 +1,61 @@
-import { useState, useEffect, useMemo, useRef } from "react"
+import { useMemo,  } from "react"
 import { useRankData } from "../../RankedDataContainer"
-import { CharacterToPlayerCountByMRintervals, ChartsDataProps } from "../../../Data/Types"
+import { useRankedChartContext } from "./RankedChartContextProvider"
 
-import { allCharacters } from "../../../Data/StaticData"
+export function useRankedChartData(){
+    const { playerLimit, sortCriteria } = useRankedChartContext()
+    const { charnamePlayerCountPairs, charnameToPlayersByMR, charnameToStats } = useRankData({ playerLimit })
 
-export function useTopPlayersChartData({ sortCriteria, showMR, playerLimit } :ChartsDataProps){
+    const totalPlayers: number = useMemo(() =>
+        charnamePlayerCountPairs.reduce((total, [,count]) => total + count, 0)
+    ,[charnamePlayerCountPairs])
 
-    const { characterPlayerCountPairs, characterToPlayersByMR } = useRankData({ playerLimit })
+    const charnameCategories: string[] = useMemo(() =>{
+        if(sortCriteria === "Representation")
+            return charnamePlayerCountPairs.map(([charName,]) => charName)
 
-    // calulate total players
-    const getTotalPlayers = (): number => {
-        if(characterPlayerCountPairs){
-            const total = characterPlayerCountPairs.reduce((total, pair) => {
-                return total + pair[1]
-            }, 0)
-            return total
-        }
-        return 100
-    }
-
-    // list of character names ordered by MR or frequency (descending)
-    function getCategories() {
-        if(sortCriteria == "MR"){
-            return characterToPlayersByMR? Object.keys(characterToPlayersByMR) : allCharacters
-        }
-        else if(sortCriteria == "Representation"){
-            return characterPlayerCountPairs? characterPlayerCountPairs.map((([character,]) => character)).reverse() : allCharacters
-        }
-        return []
-    }
-    
-    // list of frequencies per character ordered by MR or frequencies themselves (descending)
-    function getBarSeriesDataByPlayerCount(): number[]{
-        if(sortCriteria == "MR"){
-            return characterToPlayersByMR? (Object.entries(characterToPlayersByMR)).map((o) => o[1].length) : []
-        }
-        else if(sortCriteria == "Representation"){
-            return characterPlayerCountPairs? characterPlayerCountPairs.map((([,freq]) => freq)).reverse() : []
-        }
-        return []
-    }
-
-    // get all the series data arrays for each character divided by MR
-    const getBarSeriesDataByMRIntervals = (): { [key: string]: number[] } => {
-        if(characterToPlayersByMR){
-            const MRIntervals: CharacterToPlayerCountByMRintervals = {}
-            const xAxisCharacters = xAxisCategories 
-          
-            xAxisCharacters.forEach((charName) => {
-                const intervals = [0, 0, 0]  // Assume 3 intervals: 2100-2200, 2200-2300, 2300+
-          
-                if (characterToPlayersByMR[charName]) {
-                    characterToPlayersByMR[charName].forEach(player => {
-                        const playerMR = parseInt(player.MR.substring(0, 4), 10)
-
-                        if (playerMR < 2200) {
-                            intervals[0]++
-                        } else if (playerMR < 2300) {
-                            intervals[1]++
-                        } else {
-                            intervals[2]++
-                        }
+        // sortCriteria === "MR"
+        const tmp = Object.entries(charnameToPlayersByMR) // sorted by highest MR player for each character
+                    .sort(([, playersA],[, playersB]) => {
+                        const lenA = playersA.length
+                        const lenB = playersB.length
+                        if(lenA > 0 && lenB > 0)
+                            return parseInt(playersB[0].MR.substring(0, 4), 10) - parseInt(playersA[0].MR.substring(0, 4), 10)
+                        if(lenA == 0 && lenB == 0)
+                            return 0
+                        if(lenA == 0)
+                            return -parseInt(playersB[0].MR.substring(0, 4), 10)
+                        return -parseInt(playersA[0].MR.substring(0, 4), 10)
                     })
-                }
+                    .map(([charName,]) => charName)
+        return tmp
 
-                MRIntervals[charName] = intervals
-            })
-            // console.log(MRIntervals)
-            return MRIntervals
-        }
-        return {}
-    }
-
-    // memoize calculated data
-    const xAxisCategories = useMemo(() => getCategories(), 
-        [showMR, sortCriteria, characterPlayerCountPairs, characterToPlayersByMR])
-
-    const barDataByPlayerCount = useMemo(() => getBarSeriesDataByPlayerCount(), 
-        [showMR, sortCriteria, characterPlayerCountPairs, characterToPlayersByMR])
-    const barDataByMRintervals = useMemo(() => getBarSeriesDataByMRIntervals(), 
-        [showMR, sortCriteria, characterPlayerCountPairs, characterToPlayersByMR])
+    },[charnamePlayerCountPairs, charnameToPlayersByMR, sortCriteria])
     
-    const totalPlayers = useMemo(() => getTotalPlayers(), [characterPlayerCountPairs])
+    const seriesByPlayerCount: number[] = useMemo(() => {
+        return charnameCategories.map((charName) => (charnameToStats.get(charName)?.totalCount || 0))
+    },[charnameCategories, charnameToStats])
 
-    return { xAxisCategories, barDataByPlayerCount, barDataByMRintervals, totalPlayers }
+    const seriesByMRIntervals: (number[])[] = useMemo(() => {
+        return charnameCategories.map((charName) => (charnameToStats.get(charName)?.MRintervalCounts || [0,0,0]))
+    }, [charnameCategories, charnameToStats])
+
+    const seriesByHighestMR: number[] = useMemo(() => {
+        return charnameCategories.map((charName) => {
+            const players = charnameToStats.get(charName)?.players
+            if(players){
+                if(players.length <= 0) return 0
+                return parseInt(players[0].MR.substring(0,4), 10)
+            }
+            return 0
+        })
+    },[charnameCategories, charnameToStats])
+
+    return {
+        charnameCategories,
+        seriesByPlayerCount,
+        seriesByMRIntervals,
+        seriesByHighestMR,
+        totalPlayers
+    }
 }

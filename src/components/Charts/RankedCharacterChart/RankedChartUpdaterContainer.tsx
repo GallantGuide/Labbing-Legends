@@ -1,10 +1,10 @@
 import { charnameToIcon } from "../../../Data/Icons/Characters/Named/CharacterNamedIcons";
 import HighchartsReact from "highcharts-react-official"
 import { useEffect, useMemo, useRef } from "react";
-import { useTournamentChartData } from "./TournamentChartDataContainer";
-import { useTournamentChartContext } from "./TournamentChartContextProvider";
+import { useRankedChartContext } from "./RankedChartContextProvider";
+import { useRankedChartData } from "./RankedChartDataContainer";
 
-type TournamentChartDataProps = {
+type RankedChartDataProps = {
     // showPlacements: boolean,
     // uniquePlayers: boolean,
     // region: string ,
@@ -12,52 +12,52 @@ type TournamentChartDataProps = {
     chartRef: React.RefObject<HighchartsReact.RefObject> // change
 }
 
-
-export function useTournamentChartUpdater({ chartRef }: TournamentChartDataProps){
+export function useRankedChartUpdater({ chartRef }: RankedChartDataProps){
     // Series styling data
     const staticConfig = useRef({
         iconWidth: 60,
         iconPadding: 3,
-        barColors: ["#00798c", "#edae49", "#d1495b", "#3BAD4EFF"],
-        intervalTitles: ['Top 16', 'Top 8', 'Top 3', 'Top 1']
+        barColors: ["#00798c","#edae49","#d1495b",],
+        intervalTitles: ['< 2200 MR', '2200-2300 MR', '2300+ MR',],
     }).current;
     const chartWidth = useMemo(() => (staticConfig.iconWidth + staticConfig.iconPadding) * 25, [])
 
-    const { showPlacements } = useTournamentChartContext()
-    const { charnameCategories, seriesByPlayerCount, seriesByPlayerPlacements } = useTournamentChartData()
+    const { playerLimit, sortCriteria, showMR } = useRankedChartContext()
+    const { charnameCategories, seriesByPlayerCount, seriesByMRIntervals, seriesByHighestMR } = useRankedChartData()
 
-    // Get series objects
     const seriesList = useMemo((): Highcharts.Options["series"] => {
-        if(showPlacements){
-            const res: any[] = []
-            for(let i = 3; i >= 0; i--){
-                const tmp ={
-                    name: staticConfig.intervalTitles[i],
+        // if(sortCriteria === "Representation"){
+            if(showMR){
+                const res: any[] = []
+                for(let i = 2; i >= 0; i--){
+                    const tmp = {
+                        name: staticConfig.intervalTitles[i],
+                        type: 'column',
+                        stack: 'MR',
+                        color: staticConfig.barColors[i],
+                        data: seriesByMRIntervals.map((intervals, idx) => ({
+                            y: intervals[i],
+                            characterIndex: idx
+                        })),
+                    }
+                    res.push(tmp)
+                }
+                return res
+            }
+            return [
+                {
+                    name: 'Player Count',
                     type: 'column',
-                    stack: 'Placements',
-                    color: staticConfig.barColors[i],
-                    data: seriesByPlayerPlacements.map((placements, idx) => ({
-                        y: placements[i],
+                    data: seriesByPlayerCount.map((count, idx) => ({
+                        y: count,
                         characterIndex: idx
                     })),
+                    color: '#206DE9FF',
                 }
-                res.push(tmp)
-            }
-            return res
-        }
-        return [
-            {
-                name: 'Player Count',
-                type: 'column',
-                data: seriesByPlayerCount.map((count, idx) => ({
-                    y: count,
-                    characterIndex: idx
-                })),
-                color: '#206DE9FF',
-            }
-        ]
-    }, [showPlacements, charnameCategories, seriesByPlayerCount, seriesByPlayerPlacements])
+            ]
+        // }
 
+    },[showMR, charnameCategories, seriesByPlayerCount, seriesByMRIntervals])
 
     useEffect(() =>{
         if(chartRef && chartRef.current){
@@ -65,11 +65,18 @@ export function useTournamentChartUpdater({ chartRef }: TournamentChartDataProps
             if(seriesList){
                 chart.update({
                     series: seriesList
-                }, true, true)
+                }, false, true, true)
+
             }
             
             chart.update({
                 chart: { width: chartWidth, displayErrors: true },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Player Count',
+                    },
+                },
                 xAxis: {
                     categories: charnameCategories,
                     labels: {
@@ -86,10 +93,10 @@ export function useTournamentChartUpdater({ chartRef }: TournamentChartDataProps
                         }
                     }
                 },
-            }, true)
+            }, false, true, true)
+
 
             chart.redraw()
         }
     }, [seriesList])
-
 }

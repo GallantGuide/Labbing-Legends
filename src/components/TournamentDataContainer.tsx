@@ -18,8 +18,6 @@ type CharacterStats = {
 };
 
 export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers, tournamentType }: TournamentDataContainerProps) {
-    
-
     // Create a memoized filtered dataset
     const filteredData = useMemo(() => {
         let data = esportsData
@@ -90,8 +88,7 @@ export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers, 
         Array.from(charnameToStats.entries())
             .map(([char, stats]) => [char, stats.totalCount] as [string, number])
             .sort(([,a], [,b]) => b - a),
-        [charnameToStats]
-    );
+    [charnameToStats])
 
     const charnameToPlayersByPlacement = useMemo(() => {
         const result: CharacterToTourneyPlayers = {}

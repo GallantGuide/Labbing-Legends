@@ -23,6 +23,7 @@ export const allCharacters: string[] = [
     "Ryu",
     "Terry",
     "Zangief",
+    "Random"
 ]
 
 export const tournamentRegions: string[] = [ "Europe & Oceania", "North & Central America", "Asia", "South America & Africa" ]

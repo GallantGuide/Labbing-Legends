@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from "react"
 import { useTournamentData } from "../../TournamentDataContainer"
-import { allCharacters } from "../../../Data/StaticData"
 import { useTournamentChartContext } from "./TournamentChartContextProvider"
 
 type TournamentChartDataProps = {

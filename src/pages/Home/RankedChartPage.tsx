@@ -1,62 +1,27 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import { useState, useEffect, } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useTopPlayersChartOptions } from "../../components/Charts/RankedCharacterChart/RankedChartOptionsContainer";
-import Highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
-
 import { Switch, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Typography } from '@mui/material'
 
-import CountryPlayerCountPanel from "../../components/Panels/CountryPlayerCountPanel";
-
-import { GlobalContext } from "../GlobalProvider";
-
 import "./RankedChartPage.css"
+
+import CountryPlayerCountPanel from "../../components/Panels/CountryPlayerCountPanel";
+import { RankedChart } from "../../components/Charts/RankedCharacterChart/RankedChart";
+import { RankedChartContextProvider } from "../../components/Charts/RankedCharacterChart/RankedChartContextProvider";
+import CustomSelect from "../../components/Custom Components/CustomSelect";
 
 export default function RankedChartPage(){
     const navigate = useNavigate()
     const location = useLocation()
 
-    // const {sortCriteria, setSortCriteria,showMR, setShowMR,playerLimit, setPlayerLimit} = useContext(GlobalContext)
-    //TODO: move states to parent so can be passed to player list
     const [sortCriteria, setSortCriteria] = useState<string>(location.state?.sortCriteria || "Representation")
     const [showMR, setShowMR] = useState<boolean>(location.state?.showMR || true)
     const [playerLimit, setPlayerLimit] = useState<number>(location.state?.playerLimit || 500)
-
-    const { options } = useTopPlayersChartOptions({sortCriteria, showMR, playerLimit})
 
     // Update location state
     useEffect(() => {
         navigate("/", { replace: true, state: {sortCriteria, showMR, playerLimit} })
     }, [sortCriteria, showMR, playerLimit])
     
-    // icon listeners
-    useEffect(() => {
-        const chartContainer = document.querySelector('.highcharts-container')
-        if(chartContainer){
-            chartContainer.addEventListener('click', handleChartClick)
-        }
-
-        return () => {
-            if(chartContainer){
-                chartContainer.removeEventListener('click', handleChartClick)
-            }
-        }
-    }, [playerLimit])
-
-    const handleChartClick = (e: any) => {
-        const playerDataType = "ranked"
-
-        if("attributes" in e.target){
-            const attrbs = e.target["attributes"]
-            if(attrbs["class"] && attrbs["id"] && attrbs["class"].value == "character-icon"){
-                const charName = attrbs["id"].value
-                
-                // pass state values with navigation to players list page
-                navigate(`/players/${charName}`, {state: {playerLimit, playerDataType}})
-            }
-        }
-    }
-
     const handleSortCriteria = (e:any) => {
         // console.log(e.target.value)
         setSortCriteria(e.target.value)
@@ -71,7 +36,7 @@ export default function RankedChartPage(){
             setShowMR(false)
     }
 
-    const handlePlayerLimitRadio = (e: any) => {
+    const handlePlayerLimit = (e: any) => {
         // console.log(e.target.value)
         setPlayerLimit(e.target.value)
     }
@@ -81,39 +46,31 @@ export default function RankedChartPage(){
 
     return(
         <div className='Chart'>
-            <HighchartsReact highcharts={Highcharts} options={options}/>
+            <RankedChartContextProvider {...{playerLimit, showMR, sortCriteria}} >
+                <RankedChart/>
+            </RankedChartContextProvider>
             <div className="SideBar">
                 <CountryPlayerCountPanel playerLimit={playerLimit}/>
                 <div className='SortButtons'>
-                    <FormControlLabel label="Show MR" sx={{color: 'white', display: 'flex'}}
-                        control={<Switch checked={showMR} aria-label="Show MR" onChange={handleMRswitch}/>}
+                    {(sortCriteria && sortCriteria === "Representation") &&
+                        <FormControlLabel label="Show MR" sx={{color: 'white', display: 'flex'}}
+                            control={<Switch checked={showMR} aria-label="Show MR" onChange={handleMRswitch}/>}
+                        />
+                    }
+                    <CustomSelect
+                        label={"Sorting Mode"}
+                        selectedValue={sortCriteria} options={["Representation", "MR"]}
+                        handleChange={handleSortCriteria}
+                        defaultValue="Representation"
+                        sx={{marginTop: 2, width: 200}}
                     />
-                    <FormControl>
-                        <FormLabel sx={formGroupLabelStyle} id="radio-sorting">Sort Criteria</FormLabel>
-                        <RadioGroup
-                            aria-labelledby="radio-sorting"
-                            name="radio-sort-buttons-group"
-                            value={sortCriteria}
-                            onChange={handleSortCriteria}
-                        >
-                            <FormControlLabel value={"Representation"} control={<Radio />} label={<Typography sx={radioLabelStyle}>Player Count</Typography>} />
-                            <FormControlLabel value={"MR"} control={<Radio />} label={<Typography sx={radioLabelStyle}>Highest MR Player</Typography>} />
-                        </RadioGroup>
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel sx={formGroupLabelStyle} id="radio-playerLimit">Top X Players</FormLabel>
-                        <RadioGroup
-                            aria-labelledby="radio-playerLimit"
-                            name="radio-buttons-group"
-                            value={playerLimit}
-                            onChange={handlePlayerLimitRadio}
-                        >
-                            <FormControlLabel sx={radioLabelStyle} value={2000} control={<Radio />} label={<Typography sx={radioLabelStyle}>2000</Typography>} />
-                            <FormControlLabel sx={radioLabelStyle} value={1000} control={<Radio />} label={<Typography sx={radioLabelStyle}>1000</Typography>} />
-                            <FormControlLabel sx={radioLabelStyle} value={500} control={<Radio />} label={<Typography sx={radioLabelStyle}>500</Typography>} />
-                            <FormControlLabel sx={radioLabelStyle} value={100} control={<Radio />} label={<Typography sx={radioLabelStyle}>100</Typography>} />
-                        </RadioGroup>
-                    </FormControl>
+                    <CustomSelect
+                        label={"Player Size"}
+                        selectedValue={playerLimit} options={[100,500,1000,2000]}
+                        handleChange={handlePlayerLimit}
+                        defaultValue={500}
+                        sx={{marginTop: 2, width: 200}}
+                    />
                 </div>
             </div>
         </div>
