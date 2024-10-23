@@ -23,7 +23,7 @@ export function useRankedChartUpdater({ chartRef }: RankedChartDataProps){
     const chartWidth = useMemo(() => (staticConfig.iconWidth + staticConfig.iconPadding) * 25, [])
 
     const { playerLimit, sortCriteria, showMR } = useRankedChartContext()
-    const { charnameCategories, seriesByPlayerCount, seriesByMRIntervals, seriesByHighestMR } = useRankedChartData()
+    const { charnameCategories, seriesByPlayerCount, seriesByMRIntervals } = useRankedChartData()
 
     const seriesList = useMemo((): Highcharts.Options["series"] => {
         // if(sortCriteria === "Representation"){
