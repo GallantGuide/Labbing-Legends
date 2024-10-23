@@ -20,6 +20,7 @@ export default function TournamentChartPage(){
     const [offlineOnlineStatus, setOfflineOnlineStatus] = useState<string>(location.state?.offlineOnlineStatus || "Both")
     const [uniquePlayers, setUniquePlayers] = useState<boolean>(false)
     const [tournamentType, setTournamentType] = useState<string>("All")
+    const [season, setSeason] = useState<string>("Two")
 
     useEffect(() => {
         // const timeoutId = setTimeout(() => {
@@ -54,13 +55,25 @@ export default function TournamentChartPage(){
         setTournamentType(val)
     }
 
+    const handleSeasonChange = (e: any) => {
+        const val = e.target.value
+        setSeason(val)
+    }
+
     return(
-        <div className="Chart">
-            <TournamentChartContextProvider {...{showPlacements, uniquePlayers, region, offlineOnlineStatus, tournamentType}}>
+        <div className="tournament-chart">
+            <TournamentChartContextProvider {...{showPlacements, uniquePlayers, region, offlineOnlineStatus, tournamentType, season}}>
                 <TournamentChart/>
             </TournamentChartContextProvider>
-            <div className="SideBar">
-                <div className="SortButtons">
+            <div className="tournament-chart-sidebar">
+                <CustomSelect
+                    label={"Season"}
+                    selectedValue={season} options={["One", "Two"]}
+                    handleChange={handleSeasonChange}
+                    defaultValue="Two"
+                    sx={{marginTop: 2, mb: 'auto', width: 200}}
+                />
+                <div className="tournament-chart-sidebar-filters">
                     <FormControlLabel label="Show Placements" sx={{color: 'white', display: 'flex'}}
                         control={<Switch checked={showPlacements} aria-label="Show Placements" onChange={handlePlacementsSwitch}/>}
                     />

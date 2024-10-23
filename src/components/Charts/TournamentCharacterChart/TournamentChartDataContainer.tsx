@@ -9,8 +9,8 @@ type TournamentChartDataProps = {
 }
 
 export function useTournamentChartData(){
-    const { region, offlineOnlineStatus, uniquePlayers, tournamentType } = useTournamentChartContext()
-    const { charnamePlayerCountPairs, charnameToStats } = useTournamentData({ region, offlineOnlineStatus, uniquePlayers, tournamentType })
+    const { region, offlineOnlineStatus, uniquePlayers, tournamentType, season } = useTournamentChartContext()
+    const { charnamePlayerCountPairs, charnameToStats } = useTournamentData({ region, offlineOnlineStatus, uniquePlayers, tournamentType, season })
 
     const charnameCategories = useMemo(() => {
         return charnamePlayerCountPairs.map(([charName,]) => charName)

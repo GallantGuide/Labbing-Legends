@@ -31,8 +31,8 @@ export default function useTournamentChartStaticOptions(){
         column: {
             stacking: 'normal',
             pointWidth: 45, // TODO: change width of bars
-            borderWidth: 0,
-            borderRadius: 0,
+            // borderWidth: 0,
+            // borderRadius: 0,
             // dataLabels: {
             //     enabled: true,
             //     format: '{y}'

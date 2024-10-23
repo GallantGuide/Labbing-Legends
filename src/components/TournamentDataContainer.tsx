@@ -1,13 +1,14 @@
 import { useEffect, useMemo } from "react"
-import esportsData from "../Data/Esport_Data_sort.json"
+import tournamentDataSeason2 from "../Data/Esport_Data_sort.json"
 import { CharacterToTourneyPlayers, StringToNumber, TourneyPlayer } from "../Data/Types"
 import { allCharacters } from "../Data/StaticData"
 
 type TournamentDataContainerProps = {
     region?: string,
     offlineOnlineStatus?: string,
-    uniquePlayers?: boolean
-    tournamentType?: string
+    uniquePlayers?: boolean,
+    tournamentType?: string,
+    season?: string,
 }
 
 type CharacterStats = {
@@ -17,10 +18,10 @@ type CharacterStats = {
     players: TourneyPlayer[], // list of people playing the character
 };
 
-export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers, tournamentType }: TournamentDataContainerProps) {
+export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers, tournamentType, season }: TournamentDataContainerProps) {
     // Create a memoized filtered dataset
     const filteredData = useMemo(() => {
-        let data = esportsData
+        let data = tournamentDataSeason2 //TODO: dependent on season
         
         // Apply all filters in a single pass
         if (region || offlineOnlineStatus || uniquePlayers) {
@@ -53,7 +54,7 @@ export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers, 
         }
         
         return data;
-    }, [esportsData, region, offlineOnlineStatus, uniquePlayers, tournamentType])
+    }, [tournamentDataSeason2, region, offlineOnlineStatus, uniquePlayers, tournamentType, season])
 
     const charnameToStats = useMemo(() => {
         const stats = new Map<string, CharacterStats>()

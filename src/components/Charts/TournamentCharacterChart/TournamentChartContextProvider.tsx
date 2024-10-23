@@ -5,7 +5,8 @@ type TournamentChartContextType = {
     uniquePlayers: boolean,
     region: string,
     offlineOnlineStatus: string,
-    tournamentType: string
+    tournamentType: string,
+    season: string,
 }
 
 const TournamentChartContext = createContext<TournamentChartContextType | undefined>(undefined)

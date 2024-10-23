@@ -97,6 +97,7 @@ export const PlayersTable = React.memo(({ players, selectedCharacter, playerData
                                     {!selectedCharacter &&
                                         <TableCell id="character" align="center">
                                             <img className="character-icon" loading="lazy" 
+                                                title={player.Character}
                                                 src={charnameToIcon[player.Character]} 
                                                 style={{textAlign: 'center'}} 
                                             />
@@ -105,6 +106,7 @@ export const PlayersTable = React.memo(({ players, selectedCharacter, playerData
         
                                     <TableCell id="country" sx={{color: 'white',}} align="center">
                                         <img className="playerCountry" loading="lazy"
+                                            title={usingRankedData? (player as Player).Country : (player as TourneyPlayer).Residence}
                                             alt={usingRankedData? (player as Player).Country : (player as TourneyPlayer).Residence}
                                             src={countryToIcon[usingRankedData? (player as Player).Country : (player as TourneyPlayer).Residence]}
                                         />
@@ -113,9 +115,9 @@ export const PlayersTable = React.memo(({ players, selectedCharacter, playerData
                                     {usingRankedData?
                                         <TableCell id="league" sx={{color: 'white',}} align="center">
                                             {(player as Player).League.includes("37")?
-                                                <img className="league-icon" loading="lazy"  src={legendIcon} />
+                                                <img title="Legend" className="league-icon" loading="lazy"  src={legendIcon} />
                                                 :
-                                                <img className="league-icon" loading="lazy"  src={masterIcon} />
+                                                <img title="Master" className="league-icon" loading="lazy"  src={masterIcon} />
                                             }
                                         </TableCell>
                                         :

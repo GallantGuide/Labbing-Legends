@@ -1,4 +1,4 @@
-.Chart {
+.tournament-chart {
     display: flex;
 
     flex-direction: row;
@@ -7,15 +7,16 @@
 
 }
 
-.SideBar{
+.tournament-chart-sidebar{
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    align-items: center;
 
     margin-left: 20px;
 }
 
-.SortButtons{
+.tournament-chart-sidebar-filters{
     display: flex;
     flex-direction: column;
     justify-content: flex-end;

@@ -70,7 +70,7 @@ PlayerListCharacterFilterProps
                                 onChange={handleCharacterRadioGroupChange} onClick={handleCharacterRadioGroupClick}
                             />
                             <label htmlFor={charName} style={{display: 'flex'}}>
-                                <img src={charnameToCardIcon[charName]} alt={charName} style={characterImgStyle(idx, isSelected)} draggable={false}/>
+                                <img src={charnameToCardIcon[charName]} title={charName} alt={charName} style={characterImgStyle(idx, isSelected)} draggable={false}/>
                             </label>
                         </div>
                     )
