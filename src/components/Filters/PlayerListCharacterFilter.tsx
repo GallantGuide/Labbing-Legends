@@ -1,5 +1,5 @@
 import { CSSProperties, useEffect } from "react"
-import { charnameToCardIcon } from "../../Data/Icons/Characters/Cards/CharacterCardIcons"
+import { charnameToCardIcon } from "../../Static/Icons/Characters/Cards/CharacterCardIcons"
 
 type PlayerListCharacterFilterProps = {
     charFilterContainer: React.RefObject<HTMLFormElement>,

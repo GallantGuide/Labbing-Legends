@@ -23,7 +23,7 @@ export default function useTournamentChartStaticOptions(){
     }
 
     const titleOptions: Highcharts.Options["title"] = {
-        text: `Character Usage in Top 16 Players of Season ${season === "Two"? "2" : 1} Tournaments`, //FIXME: Season number eventually dynamic
+        text: `Character Usage in Top 16 of Season ${season === "Two"? "2" : 1} Tournaments`, //FIXME: Season number eventually dynamic
         align: "center",
         style: {
             color: 'white'
@@ -34,8 +34,8 @@ export default function useTournamentChartStaticOptions(){
         column: {
             stacking: 'normal',
             pointWidth: 45, // TODO: change width of bars
-            // borderWidth: 0,
-            // borderRadius: 0,
+            borderWidth: 0,
+            borderRadius: 3,
             // dataLabels: {
             //     enabled: true,
             //     format: '{y}'

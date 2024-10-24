@@ -1,8 +1,8 @@
 import { useEffect, useMemo } from "react"
-import tournamentDataSeason2 from "../Data/Esport_Data_sort.json"
+import tournamentDataSeason2 from "../Data/Esport_Data_season2v2.json"
 import tournamentDataSeason1 from "../Data/Esport_Data_season1v2.json"
-import { CharacterToTourneyPlayers, StringToNumber, TourneyPlayer } from "../Data/Types"
-import { allCharacters, allCharactersSeason1 } from "../Data/StaticData"
+import { CharacterToTourneyPlayers, StringToNumber, TourneyPlayer } from "../Static/Types"
+import { allCharacters, allCharactersSeason1 } from "../Static/StaticData"
 
 type TournamentDataContainerProps = {
     region?: string,
@@ -25,7 +25,7 @@ export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers, 
         let data = (season==="One")? tournamentDataSeason1 : tournamentDataSeason2
         
         // Apply all filters in a single pass
-        if (region || offlineOnlineStatus || uniquePlayers) {
+        if (region || offlineOnlineStatus || tournamentType) {
             
             
             data = data.filter(player => {
@@ -37,26 +37,29 @@ export function useTournamentData({ region, offlineOnlineStatus, uniquePlayers, 
                 
                 return regionMatch && eventMatch && tourneyTypeMatch
             })
+        }
 
-            // IMPORTANT: **Unique player filter must occur after other filters**
-            if(uniquePlayers){
-                const seen = new Set<string>()
-                data = data.filter(player => {
-                    // Unique players check
-                    // **IMPORTANT**: Distinguish by name, placement, and character
-                    const key = `${player.Name}-${player.Placement}-${player.Character}`
-                    if (!(seen.has(key))){
-                        seen.add(key)
-                        return true
-                    }
-                    return false
-                })
-            }
+        // IMPORTANT: **Unique player filter must occur after other filters**
+        if(uniquePlayers){
+            const seen = new Set<string>()
+            data = data.filter(player => {
+                // Unique players check
+                // **IMPORTANT**: Distinguish by name, placement, and character
+                const key = `${player.Name}-${player.Placement}-${player.Character}`
+                if (!(seen.has(key))){
+                    seen.add(key)
+                    console.log("added")
+                    return true
+                }
+                return false
+            })
         }
         // console.log(data)
         
         return data;
-    }, [tournamentDataSeason2, tournamentDataSeason1, region, offlineOnlineStatus, uniquePlayers, tournamentType, season])
+    }, [tournamentDataSeason2, tournamentDataSeason1, season,
+        region, offlineOnlineStatus, tournamentType,
+        uniquePlayers,])
 
     const charnameToStats = useMemo(() => {
         const stats = new Map<string, CharacterStats>()

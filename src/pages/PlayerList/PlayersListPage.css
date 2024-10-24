@@ -17,20 +17,32 @@
 
 .filter-bar{
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     
     max-width: 1000px;
     max-height: 60px;
 
+
     margin-bottom: 10px;
+}
+
+.inner-filter-bar{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    
+    max-height: 60px;
+
     padding: 5px 6px 5px 8px;
 
     box-sizing: border-box;
 
     background-color: #1c1e22;
     border: 1px solid rgb(65, 63, 63);
-    border-radius: 5px;
+    border-radius: 10px;
 }
 
 .playerlist-page{
@@ -47,9 +59,17 @@
     align-items: center;
     justify-content: flex-start;
 
-
+    /* color: rgb(0, 119, 255); */
+    /* color: rgb(57, 132, 224); */
+    /* color: rgb(28, 64, 109); */
     
     overflow: hidden;
+}
+
+.sidebar-filters{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .playertable-container{

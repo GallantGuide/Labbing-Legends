@@ -1,6 +1,6 @@
 import { useState, useEffect, } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Switch, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Typography } from '@mui/material'
+import CustomToggleButton from "../../components/Custom Components/CustomToggleButton"
 
 import "./RankedChartPage.css"
 
@@ -27,22 +27,15 @@ export default function RankedChartPage(){
         setSortCriteria(e.target.value)
     }
 
-    const handleMRswitch = (e: any) => {
-        // console.log(e.target.checked)
-        const isChecked = e.target.checked
-        if(isChecked)
-            setShowMR(true)
-        else
-            setShowMR(false)
+    const handleShowMRClick = (e: any) => {
+        const val = !showMR
+        setShowMR(val)
     }
 
     const handlePlayerLimit = (e: any) => {
         // console.log(e.target.value)
         setPlayerLimit(e.target.value)
     }
-
-    const formGroupLabelStyle = {color: "white", display: 'flex', fontWeight: 'normal'}
-    const radioLabelStyle= {color: "white", fontSize: 13}
 
     return(
         <div className='Chart'>
@@ -53,8 +46,11 @@ export default function RankedChartPage(){
                 <CountryPlayerCountPanel playerLimit={playerLimit}/>
                 <div className='SortButtons'>
                     {(sortCriteria && sortCriteria === "Representation") &&
-                        <FormControlLabel label="Show MR" sx={{color: 'white', display: 'flex'}}
-                            control={<Switch checked={showMR} aria-label="Show MR" onChange={handleMRswitch}/>}
+                        <CustomToggleButton
+                            label="Show MR"
+                            selectedValue={showMR}
+                            handleClick={handleShowMRClick}
+                            sx={{width: 175, padding: '10px 0px', boxSizing: 'border-box', mt: 1}}
                         />
                     }
                     <CustomSelect
@@ -65,7 +61,7 @@ export default function RankedChartPage(){
                         sx={{marginTop: 2, width: 200}}
                     />
                     <CustomSelect
-                        label={"Player Size"}
+                        label={"Total Player Size"}
                         selectedValue={playerLimit} options={[100,500,1000,2000]}
                         handleChange={handlePlayerLimit}
                         defaultValue={500}

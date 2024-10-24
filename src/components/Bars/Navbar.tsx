@@ -1,10 +1,9 @@
 import { useState } from "react";
 
-import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Button, MenuItem } from "@mui/material"
+import { AppBar, Toolbar, Button } from "@mui/material"
 import { SxProps } from "@mui/material";
 
 import "./navbar.css"
-import { color } from "highcharts";
 import { useLocation, useNavigate } from "react-router-dom";
 
 function Navbar() {

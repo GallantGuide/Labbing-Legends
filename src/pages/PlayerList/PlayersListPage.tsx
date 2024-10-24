@@ -2,21 +2,23 @@ import { useState, useRef, useEffect, CSSProperties } from "react";
 import { useRankData } from "../../components/RankedDataContainer"
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 
-import { Player, TourneyPlayer } from "../../Data/Types";
+import { Player, TourneyPlayer } from "../../Static/Types"
 
 import "./PlayersListPage.css"
 import {PlayerListPlayerFilter} from "../../components/Filters/PlayerListPlayerFilter";
 import PlayerListCharacterFilter from "../../components/Filters/PlayerListCharacterFilter";
 import {PlayersTable} from "../../components/Lists/PlayersTable";
 
-import { Stack } from "@mui/material";
+import { FormControlLabel, Stack, Switch, SxProps, ToggleButton } from "@mui/material";
 import { AntSwitch, SwitchTextTrack } from "../../components/Custom Components/CustomStyledComponents";
 
 import { useTournamentData } from "../../components/TournamentDataContainer";
-import { tournamentRegions } from "../../Data/StaticData";
-import { PlayerListCountryFilterSide } from "../../OLD/PlayerListCountryFilterSide";
+import { tournamentRegions } from "../../Static/StaticData"
+
 import CustomSelect from "../../components/Custom Components/CustomSelect";
-import { charnameToBackgrounds } from "../../Data/Backgrounds/CharacterBackgrounds";
+import CustomToggleButton from "../../components/Custom Components/CustomToggleButton"
+
+import { charnameToBackgrounds } from "../../Static/Backgrounds/CharacterBackgrounds";
 
 function PlayersListPage() {
     const location = useLocation()
@@ -30,10 +32,8 @@ function PlayersListPage() {
     const charFilterContainer = useRef<HTMLFormElement>(null)
     const characterRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
 
-    // Passed states from charts
-    const [playerLimit, setPlayerLimit] = useState(location.state?.playerLimit || 1000)
-    const [pl, setPl] = useState(100)
-    const [playerDataType, setPlayerDataType] = useState(location.state?.playerDataType || "ranked")
+    const [playerDataType, setPlayerDataType] = useState(location.state?.playerDataType || "tournament")
+
     // Displayed table data
     const [players, setPlayers] = useState<Player[] | TourneyPlayer[]>([])
     // Filters
@@ -45,23 +45,24 @@ function PlayersListPage() {
     // Ranked Filters 
     const [phase, setPhase] = useState<number>(5)
     const [phaseDate, setPhaseDate] = useState<Date | null>(null)
+    const [playerLimit, setPlayerLimit] = useState(location.state?.playerLimit || 1000)
     // Tournament Filters
     const [region, setRegion] = useState<string>(location.state?.region || "World")
     const [tournamentType, setTournamentType] = useState<string>(location.state?.tournamentType || "All")
     const [offlineOnlineStatus, setOfflineOnlineStatus] = useState<string>(location.state?.offlineOnlineStatus || "Both")
     const [season, setSeason] = useState<string>(location.state?.season || "Two")
+    const [uniquePlayers, setUniquePlayers] = useState<boolean>(location.state?.uniquePlayers || false)
 
     // Data from custom hooks
     const { charnameToPlayersByMR, playersByMR, playerCountries } = useRankData({ playerLimit })
-    const { charnameToPlayersByPlacement, playersByEventAndPlacing, tourneyPlayerCountries } = useTournamentData({season})
-    
+    const { charnameToPlayersByPlacement, playersByEventAndPlacing, tourneyPlayerCountries } = useTournamentData({season, uniquePlayers})
 
     useEffect(() => {
         // console.log("Filters Effect")
         let tmp: Player[] | TourneyPlayer[] = []
         if(playerDataType === "ranked"){
             tmp = selectedCharacter? charnameToPlayersByMR[selectedCharacter] : playersByMR
-            if(selectedCountry && selectedCountry != "World") //FIXME: 
+            if(selectedCountry && selectedCountry != "World") //FIXME:
                 tmp = tmp.filter((player) => player.Country === selectedCountry)
             if(debouncedSearchValue != "")
                 tmp = tmp.filter((player) => player.CFN.toLowerCase().includes(debouncedSearchValue.toLowerCase()))
@@ -69,7 +70,7 @@ function PlayersListPage() {
         }
         else{ // "tournament"
             tmp = selectedCharacter? charnameToPlayersByPlacement[selectedCharacter] : playersByEventAndPlacing
-            if(selectedCountry && selectedCountry != "World") //FIXME: 
+            if(selectedCountry && selectedCountry != "World") //FIXME:
                 tmp = tmp.filter((player) => player.Residence === selectedCountry)
             if(debouncedSearchValue != "")
                 tmp = tmp.filter((player) => player.Name.toLowerCase().includes(debouncedSearchValue.toLowerCase()))
@@ -86,11 +87,12 @@ function PlayersListPage() {
         // update URL
         navigate(`/players/${selectedCharacter || ""}`, { replace: true})
         
-    }, [//ranked state triggers
-        region, tournamentType, offlineOnlineStatus, season, //tournament state triggers
+    }, [playerLimit,//ranked state triggers
+        region, tournamentType, offlineOnlineStatus, season, uniquePlayers, //tournament state triggers
         selectedCharacter, debouncedSearchValue, selectedCountry, //shared filter triggers
         playerDataType])
-
+    
+    // Debouncer for player search
     useEffect(() =>{
         const handler = setTimeout(() => {
             setDebouncedSearchValue(searchValue)
@@ -154,8 +156,10 @@ function PlayersListPage() {
 
     const handleCharacterRadioGroupClick = (e: any) => {
         const name = e.target.value
-        if(selectedCharacter === name)
+        if(selectedCharacter === name){
             setSelectedCharacter(null)
+            setUniquePlayers(false)
+        }
     }
 
     const handleSearchValueChange = (e: any) => {
@@ -172,14 +176,11 @@ function PlayersListPage() {
         setSelectedCountry(country)
     }
 
-    const handlePlayerCountChange = (e: any, newValue: number | number[]) => {
+    const handlePlayerLimitChange = (e: any) => {
         // console.log(newValue  as number)
-        setPlayerLimit(newValue as number)
-    }
-
-    const handlePlChange = (e: any, newValue: number | number[]) => {
-        // console.log(newValue  as number)
-        setPl(newValue as number)
+        // setPlayerLimit(newValue as number)
+        const val = e.target.value
+        setPlayerLimit(val)
     }
 
     const handleTournamentTypeChange = (e: any) => {
@@ -212,22 +213,37 @@ function PlayersListPage() {
         setSeason(val)
     }
 
+    const handleUniquePlayerClick = (e: any) => {
+        const val = !uniquePlayers
+        setUniquePlayers(val)
+    }
+
     const sideBarFilterContainerStyle: CSSProperties = {
-        display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+        display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center',
         position: 'absolute', left: 'calc(50% + 500px)', maxWidth: 300, marginLeft: 10, marginTop: 53
     }
 
     return(
         <div className="playerlist-page">
             <div className="filters-table-container">
-                <div className="filter-bar" >
-                    <PlayerListPlayerFilter handleSearchValueChange={handleSearchValueChange} searchValue={searchValue}/>
-                    <Stack direction="row" spacing={1} sx={{}}>
-                        <SwitchTextTrack checked={playerDataType === "tournament"} onChange={handleDataTypeSwitch} inputProps={{ 'aria-label': 'ant design' }} />
-                    </Stack>
+                <div className="filter-bar">
+                    {selectedCharacter &&
+                        <CustomToggleButton
+                            label={"Unique Placings"}
+                            selectedValue={uniquePlayers}
+                            handleClick={handleUniquePlayerClick}
+                            sx={{mr: 1,}}
+                        />
+                    }
+                    <div className="inner-filter-bar" >
+                        <PlayerListPlayerFilter handleSearchValueChange={handleSearchValueChange} searchValue={searchValue}/>
+                        <Stack direction="row" spacing={1} sx={{}}>
+                            <SwitchTextTrack checked={playerDataType === "tournament"} onChange={handleDataTypeSwitch} inputProps={{ 'aria-label': 'ant design' }} />
+                        </Stack>
+                    </div>
                 </div>
                 <div className="playertable-container">
-                    <PlayersTable season={season} players={players} selectedCharacter={selectedCharacter} playerDataType={playerDataType}/>
+                    <PlayersTable uniquePlayers={uniquePlayers} season={season} players={players} selectedCharacter={selectedCharacter} playerDataType={playerDataType}/>
                 </div>
             </div>
             <div className="sidebar-filters" style={sideBarFilterContainerStyle}>
@@ -240,6 +256,7 @@ function PlayersListPage() {
                             defaultValue="Two"
                             sx={{marginTop: 2, width: 240}}
                         />
+
                         {season === "Two" &&
                             <CustomSelect
                                 label={"Offline/Online"}
@@ -261,6 +278,18 @@ function PlayersListPage() {
                             selectedValue={region} options={["World",...tournamentRegions]}
                             handleChange={handleRegionChange}
                             defaultValue="World"
+                            sx={{marginTop: 2, width: 240}}
+                        />
+                    </>
+                }
+                {playerDataType === "ranked" &&
+                    <>
+                        <CustomSelect
+                            label={"Total Player Size"}
+                            selectedValue={playerLimit}
+                            options={[100,500,1000,2000]}
+                            handleChange={handlePlayerLimitChange}
+                            defaultValue={1000}
                             sx={{marginTop: 2, width: 240}}
                         />
                     </>

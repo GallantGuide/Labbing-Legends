@@ -1,13 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRankData } from "../RankedDataContainer";
-import { CountryPlayerCountPairs, StringToNumber, CountryPlayerCountDataProps } from "../../Data/Types";
-
-import "./CountryPlayerCountPanel.css"
+import { CountryPlayerCountPairs, StringToNumber, CountryPlayerCountDataProps } from "../../Static/Types";
 
 function useCountryPlayerCountData({ playerLimit }: CountryPlayerCountDataProps) {
     const { charnameToPlayersByMR } = useRankData({ playerLimit })
 
-    const getCountryToPlayerCount = () => {
+    const countryToPlayerCount: CountryPlayerCountPairs = useMemo(() => {
         const countryToPlayerCount: StringToNumber = {}
         const seenUsercodes = new Set<string>()
 
@@ -34,9 +32,9 @@ function useCountryPlayerCountData({ playerLimit }: CountryPlayerCountDataProps)
 
         /**
          * "Other" originally represented player count without a country flag
-         * "Other" now represents the sum of player counts 
-         * for those countries with <= 5 players  
-         * "No Country" represents player count without a country flag 
+         * "Other" now represents the sum of player counts
+         * for those countries with <= 5 players
+         * "No Country" represents player count without a country flag
          */
         countryToPlayerCount["No Country"] = countryToPlayerCount["Other"]
         delete countryToPlayerCount["Other"]
@@ -53,9 +51,8 @@ function useCountryPlayerCountData({ playerLimit }: CountryPlayerCountDataProps)
         sortedCountries.push(["Other", otherPlayerCount])
 
         return sortedCountries
-    }
+    }, [charnameToPlayersByMR])
 
-    const countryToPlayerCount: CountryPlayerCountPairs = useMemo(() => getCountryToPlayerCount(), [charnameToPlayersByMR])
 
     return { countryToPlayerCount }
 }

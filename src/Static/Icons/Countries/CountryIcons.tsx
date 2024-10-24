@@ -56,6 +56,22 @@ import TAIWAN_ICON from "../../../assets/countryFlagIcons/taiwan-icon.png"
 import SCOTLAND_ICON from "../../../assets/countryFlagIcons/scotland-icon.png"
 import PUERTORICO_ICON from "../../../assets/countryFlagIcons/puertorico-icon.png"
 
+import BAHRAIN_ICON from "../../../assets/countryFlagIcons/bahrain-icon.png"
+import COLOMBIA_ICON from "../../../assets/countryFlagIcons/colombia-icon.png"
+import ECUADOR_ICON from "../../../assets/countryFlagIcons/ecuador-icon.png"
+import ELSALVADOR_ICON from "../../../assets/countryFlagIcons/elsalvador-icon.png"
+import GUATAMELA_ICON from "../../../assets/countryFlagIcons/guatemala-icon.png"
+import ISRAEL_ICON from "../../../assets/countryFlagIcons/israel-icon.png"
+import KENYA_ICON from "../../../assets/countryFlagIcons/kenya-icon.png"
+import KUWAIT_ICON from "../../../assets/countryFlagIcons/kuwait-icon.png"
+import JORDAN_ICON from "../../../assets/countryFlagIcons/jordan-icon.png"
+import REUNION_ICON from "../../../assets/countryFlagIcons/reunion-icon.png"
+import MADAGASCAR_ICON from "../../../assets/countryFlagIcons/madgascar-icon.png"
+import MOZAMBIQUE_ICON from "../../../assets/countryFlagIcons/mozambique-icon.png"
+import PANAMA_ICON from "../../../assets/countryFlagIcons/panama-icon.png"
+import SAINTLUCIA_ICON from "../../../assets/countryFlagIcons/saintlucia-icon.png"
+import TRINIDADANDTOBAGO_ICON from "../../../assets/countryFlagIcons/trinidadandtobago-icon.png"
+import REPUBLICOFSOUTHAFRICA_ICON from "../../../assets/countryFlagIcons/republicofsouthafrica-icon.png"
 
 import NOCOUNTRY_ICON from "../../../assets/countryFlagIcons/nocountry-icon.png"
 import EARTH_ICON from "../../../assets/countryFlagIcons/earth-icon.png"
@@ -118,7 +134,23 @@ export const countryToIcon: Record<string, string> = {
     "Taiwan": TAIWAN_ICON,
     "Scotland": SCOTLAND_ICON,
     "Puerto Rico": PUERTORICO_ICON,
-    
+    "Bahrain": BAHRAIN_ICON,
+    "Colombia": COLOMBIA_ICON,
+    "Ecuador": ECUADOR_ICON,
+    "El Salvador": ELSALVADOR_ICON,
+    "Guatamela": GUATAMELA_ICON,
+    "Israel": ISRAEL_ICON,
+    "Kenya": KENYA_ICON,
+    "Kuwait": KUWAIT_ICON,
+    "Jordan": JORDAN_ICON,
+    "Réunion": REUNION_ICON,
+    "Madagascar": MADAGASCAR_ICON,
+    "Mozambique": MOZAMBIQUE_ICON,
+    "Panama": PANAMA_ICON,
+    "Saint Lucia": SAINTLUCIA_ICON,
+    "Trinidad and Tobago": TRINIDADANDTOBAGO_ICON,
+    "Republic of South Africa": REPUBLICOFSOUTHAFRICA_ICON,
+
     "Other": NOCOUNTRY_ICON,
     "Earth": EARTH_ICON
 }

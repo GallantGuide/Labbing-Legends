@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from "react"
 import { FormControlLabel, Switch, FormControl, FormLabel, RadioGroup, Radio, Typography } from "@mui/material"
 
-import { tournamentRegions } from "../../Data/StaticData"
+import { tournamentRegions } from "../../Static/StaticData"
 
 import "./TournamentChartPage.css"
 import { useLocation, useNavigate } from "react-router-dom"
 import { TournamentChart } from "../../components/Charts/TournamentCharacterChart/TournamentChart"
 
 import CustomSelect from "../../components/Custom Components/CustomSelect"
+import CustomToggleButton from "../../components/Custom Components/CustomToggleButton"
 
 import { TournamentChartContextProvider } from "../../components/Charts/TournamentCharacterChart/TournamentChartContextProvider"
 
@@ -62,6 +63,19 @@ export default function TournamentChartPage(){
         setTournamentType(val)
     }
 
+    const handleShowPlacementsClick = (e: any) => {
+        const val = !showPlacements
+        setShowPlacements(val)
+    }
+    const handleShowChampionsClick = (e: any) => {
+        const val = !showChampions
+        setShowChampions(val)
+    }
+    const handleUniquePlayerClick = (e: any) => {
+        const val = !uniquePlayers
+        setUniquePlayers(val)
+    }
+
     const handleSeasonChange = (e: any) => {
         const val = e.target.value
         //FIXME:
@@ -84,15 +98,24 @@ export default function TournamentChartPage(){
                 />
                 <div className="tournament-chart-sidebar-filters">
                     {!showChampions &&
-                        <FormControlLabel label="Show Placements" sx={{color: 'white', display: 'flex'}}
-                            control={<Switch checked={showPlacements} aria-label="Show Placements" onChange={handlePlacementsSwitch}/>}
+                        <CustomToggleButton
+                            label={"Show Placements"}
+                            selectedValue={showPlacements}
+                            handleClick={handleShowPlacementsClick}
+                            sx={{width: 175, padding: '10px 0px', boxSizing: 'border-box', mt: 1}}
                         />
                     }
-                    <FormControlLabel label="Show Champions" sx={{color: 'white', display: 'flex'}}
-                        control={<Switch checked={showChampions} aria-label="Show Champions" onChange={handleShowChampionsSwitch}/>}
+                    <CustomToggleButton
+                        label={"Show Champions"}
+                        selectedValue={showChampions}
+                        handleClick={handleShowChampionsClick}
+                        sx={{width: 175, padding: '10px 0px', boxSizing: 'border-box', mt: 1}}
                     />
-                    <FormControlLabel label="Unique by player" sx={{color: 'white', display: 'flex'}}
-                        control={<Switch checked={uniquePlayers} aria-label="Unique by player" onChange={handleUniquePlayerSwitch}/>}
+                    <CustomToggleButton
+                        label={"Unique Players"}
+                        selectedValue={uniquePlayers}
+                        handleClick={handleUniquePlayerClick}
+                        sx={{width: 175, padding: '10px 0px', boxSizing: 'border-box', mt: 1}}
                     />
                     {season === "Two" &&
                         <CustomSelect

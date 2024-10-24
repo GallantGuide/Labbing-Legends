@@ -77,7 +77,7 @@ export default function StyledSelect({ label, selectedValue, options, handleChan
     }
   };
 
-  const getMenuItemStyles = (option: string) => ({
+  const getMenuItemStyles = (option: string | number) => ({
     backgroundColor: selectedValue === option? focusedBackgroundColor : unfocusedBackgroundColor,
     '&:hover': {
       backgroundColor: focusedBackgroundColor + " !important",

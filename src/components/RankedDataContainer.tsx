@@ -1,10 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
-import { CharacterToPlayers, StringToNumber, Player, CharacterPlayerCountPairs } from "../Data/Types";
-
-import { allCharacters } from "../Data/StaticData";
+import { CharacterToPlayers, StringToNumber, Player, CharacterPlayerCountPairs } from "../Static/Types";
+import { allCharacters } from "../Static/StaticData";
 
 import rankData from "../Data/Players10_20_24v2.json"
-import { filter } from "echarts/types/src/export/api/util.js";
 
 type RankDataProps = {
     playerLimit?: number

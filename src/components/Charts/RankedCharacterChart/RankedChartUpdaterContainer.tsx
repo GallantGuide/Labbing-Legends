@@ -1,4 +1,4 @@
-import { charnameToIcon } from "../../../Data/Icons/Characters/Named/CharacterNamedIcons";
+import { charnameToIcon } from "../../../Static/Icons/Characters/Named/CharacterNamedIcons";
 import HighchartsReact from "highcharts-react-official"
 import { useEffect, useMemo, useRef } from "react";
 import { useRankedChartContext } from "./RankedChartContextProvider";

@@ -1,24 +1,23 @@
-import { legendIcon, masterIcon } from "../../Data/Icons"
-import { charnameToCardIcon } from "../../Data/Icons/Characters/Cards/CharacterCardIcons"
-import { charnameToIcon } from "../../Data/Icons/Characters/Unnamed/CharacterUnnamedIcons"
-import { countryToIcon } from "../../Data/Icons/Countries/CountryIcons"
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, SxProps, CircularProgress } from "@mui/material"
+import { legendIcon, masterIcon } from "../../Static/Icons"
+import { charnameToIcon } from "../../Static/Icons/Characters/Unnamed/CharacterUnnamedIcons"
+import { countryToIcon } from "../../Static/Icons/Countries/CountryIcons"
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, SxProps } from "@mui/material"
 
-import { Player, TourneyPlayer } from "../../Data/Types"
+import { Player, TourneyPlayer } from "../../Static/Types"
 
 import "./PlayersTable.css"
-import { useEffect } from "react"
 import React from "react"
 
 type PlayersTableDataProps = {
     players: Player[] | TourneyPlayer[],
     selectedCharacter: string | null,
     playerDataType: string,
-    season: string
+    season: string,
+    uniquePlayers: boolean
 }
 
 // Always keep this memoized. players prop is too big
-export const PlayersTable = React.memo(({ players, selectedCharacter, playerDataType, season }: PlayersTableDataProps) => {
+export const PlayersTable = React.memo(({ players, selectedCharacter, playerDataType, season, uniquePlayers }: PlayersTableDataProps) => {
 
     const tableContainerStyle: SxProps = {
         border: '1px solid rgb(65, 63, 63);',
@@ -42,7 +41,7 @@ export const PlayersTable = React.memo(({ players, selectedCharacter, playerData
     }
 
     const rankedTableHeadCategories = ["Character", "Country", "League", "MR"]
-    const tournamentTableHeadCategories = ["Character", "Residence", "Tournament", "Tournament Region"]
+    const tournamentTableHeadCategories = !uniquePlayers? ["Character", "Residence", "Tournament", "Tournament Region"] : ["Character", "Residence"]
 
     // TODO: might need to be state?
     const usingRankedData = playerDataType === "ranked"
@@ -136,27 +135,29 @@ export const PlayersTable = React.memo(({ players, selectedCharacter, playerData
                                             src={countryToIcon[usingRankedData? (player as Player).Country : (player as TourneyPlayer).Residence]}
                                         />
                                     </TableCell>
-        
-                                    {usingRankedData?
-                                        <TableCell id="league" sx={{color: 'white',}} align="center">
-                                            {(player as Player).League.includes("37")?
-                                                <img title="Legend" className="league-icon" loading="lazy"  src={legendIcon} />
-                                                :
-                                                <img title="Master" className="league-icon" loading="lazy"  src={masterIcon} />
-                                            }
-                                        </TableCell>
-                                        :
-                                        <TableCell id="event" sx={{color: 'white',}} align="center">
-                                            {eventName}
-                                        </TableCell>
+                                    {usingRankedData &&
+                                        <>
+                                            <TableCell id="league" sx={{color: 'white',}} align="center">
+                                                {(player as Player).League.includes("37")?
+                                                    <img title="Legend" className="league-icon" loading="lazy"  src={legendIcon} />
+                                                    :
+                                                    <img title="Master" className="league-icon" loading="lazy"  src={masterIcon} />
+                                                }
+                                            </TableCell>
+                                            <TableCell id="mr" sx={{color: 'white',}} align="center">{(player as Player).MR}</TableCell>
+                                        </>
                                     }
-        
-                                    {usingRankedData?
-                                        <TableCell id="mr" sx={{color: 'white',}} align="center">{(player as Player).MR}</TableCell>
+                                    {!usingRankedData && (!uniquePlayers)?
+                                        <>
+                                            <TableCell id="event" sx={{color: 'white',}} align="center">
+                                                {eventName}
+                                            </TableCell>
+                                            <TableCell id="region" sx={{color: 'white',}} align="center">
+                                                {(player as TourneyPlayer).Region}
+                                            </TableCell>
+                                        </>
                                         :
-                                        <TableCell id="region" sx={{color: 'white',}} align="center">
-                                            {(player as TourneyPlayer).Region}
-                                        </TableCell>
+                                        <></>
                                     }
         
                                 </TableRow>

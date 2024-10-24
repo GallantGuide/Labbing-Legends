@@ -35,7 +35,7 @@ export default function useRankedChartStaticOptions(){
             stacking: 'normal',
             pointWidth: 45, // TODO: change width of bars
             borderWidth: 0,
-            borderRadius: 0,
+            borderRadius: 3,
             // dataLabels: {
             //     enabled: true,
             //     format: '{y}'

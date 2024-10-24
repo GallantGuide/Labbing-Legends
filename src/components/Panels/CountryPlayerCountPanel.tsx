@@ -1,9 +1,7 @@
-import { countryToIcon } from "../../Data/Icons/Countries/CountryIcons"; 
+import { countryToIcon } from "../../Static/Icons/Countries/CountryIcons"; 
 
-import React from "react";
-import { useState, useEffect, useMemo } from "react";
 import useCountryPlayerCountData from "./CountryPlayerCountDataContainer";
-import { CountryPlayerCountDataProps } from "../../Data/Types";
+import { CountryPlayerCountDataProps } from "../../Static/Types";
 
 import "./CountryPlayerCountPanel.css"
 

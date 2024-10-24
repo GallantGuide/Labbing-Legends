@@ -1,13 +1,9 @@
-import React, { useEffect } from 'react'
-import { useState } from 'react'
 import './App.css'
 import { useRoutes } from 'react-router-dom'
-import Header from './components/Bars/Navbar'
 import PlayersListPage from './pages/PlayerList/PlayersListPage'
 import RankedChartPage from './pages/Home/RankedChartPage'
 import { createTheme, ThemeProvider } from '@mui/material'
 
-import { GlobalProvider } from './pages/GlobalProvider'
 import Navbar from './components/Bars/Navbar'
 import TournamentChartPage from './pages/Esports/TournamentChartPage'
 
